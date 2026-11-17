@@ -1,0 +1,14 @@
+# Never published
+materials/
+drafts/
+.claude/
+CLAUDE.md
+*.psd
+*.ai
+*.indd
+*.3dm
+*.pdf
+!assets/resume/*.pdf
+Thumbs.db
+desktop.ini
+.DS_Store

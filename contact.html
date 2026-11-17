@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Yiting Zhong</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body data-page="contact">
+<header data-site-header></header>
+<div class="pagehead"><div class="left"><h1>Contact</h1></div></div>
+<main class="prose">
+  <p class="lead">I am looking for an entry-level role starting June 2027. If my work fits what your team does, I would love to talk.</p>
+  <h2>Email</h2>
+  <p><a id="c-email" style="text-decoration:underline;text-underline-offset:4px"></a></p>
+  <h2>LinkedIn</h2>
+  <p><a id="c-li" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:4px">Yiting Zhong</a></p>
+  <h2>Based in</h2>
+  <p id="c-loc"></p>
+</main>
+<script>
+addEventListener("DOMContentLoaded", () => {
+  const e = document.getElementById("c-email"); e.href = "mailto:" + SITE.email; e.textContent = SITE.email;
+  document.getElementById("c-li").href = SITE.linkedin;
+  document.getElementById("c-loc").textContent = SITE.location;
+});
+</script>
+<footer data-site-footer></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+/* ============================================================================
+   Shared styles for every page. One clean background; colour comes only from the work.
+   ========================================================================== */
+:root {
+  --bg: #ffffff;
+  --ink: #121212;
+  --muted: #8a8780;
+  --line: #e4e4e1;
+  --paper: #f2f0ea;
+  --ease: cubic-bezier(.7, 0, .2, 1);
+  --pad: 28px;
+}
+* { box-sizing: border-box; margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { font: 15px/1.5 "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+img { display: block; max-width: 100%; }
+svg { display: block; width: 100%; height: 100%; }
+.mono { font-family: "Courier New", ui-monospace, monospace; font-size: 13px; letter-spacing: .02em; }
+.muted { color: var(--muted); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* ---- header / footer ---- */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 18px var(--pad); position: relative; z-index: 20; }
+.top .name { font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+.top nav { display: flex; gap: 22px; color: var(--muted); flex-wrap: wrap; justify-content: flex-end; }
+.top nav a.on, .top nav a:hover { color: var(--ink); }
+.foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 26px var(--pad) 40px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.foot a { color: var(--ink); margin-left: 18px; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---- page heading used by inner pages ---- */
+.pagehead { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 26px var(--pad) 0; }
+.pagehead .left { display: flex; align-items: baseline; gap: 18px; }
+.pagehead h1 { font-size: clamp(26px, 3.2vw, 40px); font-weight: 500; letter-spacing: -.035em; line-height: 1; }
+.pagehead .count { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+/* ---- pill filters and the List / Grid switch ---- */
+.filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.filters button { padding: 6px 14px; border: 1px solid var(--ink); border-radius: 999px; font-size: 13px; transition: background .2s, color .2s; }
+.filters button.on, .filters button:hover { background: var(--ink); color: var(--bg); }
+.switch { display: flex; border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; font-size: 13px; }
+.switch button { padding: 6px 16px; }
+.switch button.on { background: var(--ink); color: var(--bg); }
+
+/* ---- halftone cover: a real image screened in one ink on paper ---- */
+.ht { container-type: inline-size; --dot: 4px; --dot: max(3px, round(calc(100cqw / 120), 1px)); position: absolute; inset: 0; overflow: hidden; background: var(--ink); isolation: isolate; }
+.ht .tone { position: absolute; inset: 0; mix-blend-mode: screen; filter: grayscale(1) contrast(14); background: #fff; }
+.ht .tone::before { content: ""; position: absolute; inset: -50%; background: radial-gradient(circle at center, #000 0, #fff 100%); background-size: var(--dot) var(--dot); transform: rotate(28deg); }
+.ht .tone img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: hard-light; filter: grayscale(1) brightness(var(--lum, .72)) contrast(1.7) blur(.3px); }
+.ht::after { content: ""; position: absolute; inset: 0; background: var(--paper); mix-blend-mode: multiply; pointer-events: none; }
+img.fill { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---- simple inner pages ---- */
+.prose { max-width: 760px; padding: 48px var(--pad) 100px; }
+.prose h2 { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin: 48px 0 12px; }
+.prose p { font-size: 18px; line-height: 1.6; margin-bottom: 14px; }
+.prose .lead { font-size: clamp(22px, 2.6vw, 30px); line-height: 1.3; letter-spacing: -.02em; }
+.placeholder-note { display: inline-block; font-size: 12px; color: var(--muted); border: 1px dashed var(--muted); border-radius: 4px; padding: 4px 10px; margin-bottom: 24px; }
+
+@media (max-width: 720px) {
+  :root { --pad: 18px; }
+  .top { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .top nav { justify-content: flex-start; font-size: 14px; }
+  .close { top: 96px; }
+  .top nav { gap: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition-duration: .01s !important; animation-duration: .01s !important; } }
+
+/* ============================================================================
+   Project pages (work/<slug>/index.html). Content blocks a project page can use:
+   .p-text, figure.wide, .p-pair (two figures), .p-quote. Captions go in <figcaption>.
+   ========================================================================== */
+.close { position: fixed; top: 72px; right: var(--pad); z-index: 40; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-size: 16px; transition: transform .25s; }
+.close:hover { transform: rotate(90deg); }
+.p-hero { position: relative; height: min(68vh, 760px); overflow: hidden; background: var(--paper); }
+.p { max-width: 1080px; margin: 0 auto; padding: 40px var(--pad) 40px; }
+.p-meta { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.p h1 { font-size: clamp(36px, 6vw, 76px); font-weight: 500; letter-spacing: -.045em; line-height: 1; margin: 8px 0 40px; }
+.p-intro { display: grid; grid-template-columns: 220px 1fr; gap: 40px; margin-bottom: 64px; }
+.p-intro dt { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.p-intro dd { margin: 0 0 16px; }
+.p-intro .lede p { font-size: 19px; line-height: 1.55; margin-bottom: 14px; max-width: 38em; }
+.p-text { max-width: 640px; margin: 0 0 56px 260px; }
+.p-text h2 { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 12px; }
+.p-text p { font-size: 17px; line-height: 1.6; margin-bottom: 14px; }
+.p figure { margin: 0 0 56px; }
+.p figure img, .p figure .ph { width: 100%; border-radius: 3px; }
+.p figure .ph { aspect-ratio: 16/9; background: var(--paper); display: grid; place-items: center; color: var(--muted); font-size: 13px; border: 1px dashed #cfcac0; }
+.p figcaption { font-size: 13px; color: var(--muted); margin-top: 10px; max-width: 40em; }
+.p-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.p-pair .ph { aspect-ratio: 4/5 !important; }
+.p-quote { font-size: clamp(22px, 2.8vw, 34px); line-height: 1.25; letter-spacing: -.02em; max-width: 24em; margin: 0 0 64px 260px; }
+.p-next { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; max-width: 1080px; margin: 40px auto 0; padding: 24px var(--pad) 80px; border-top: 1px solid var(--ink); }
+.p-next span { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.p-next b { font-size: clamp(24px, 4vw, 44px); font-weight: 500; letter-spacing: -.03em; transition: transform .3s; }
+.p-next:hover b { transform: translateX(-10px); }
+@media (max-width: 720px) {
+  .p-hero { height: 44vh; }
+  .p-intro { grid-template-columns: 1fr; gap: 12px; }
+  .p-text, .p-quote { margin-left: 0; }
+  .p-pair { grid-template-columns: 1fr; }
+}

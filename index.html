@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yiting Zhong</title>
+<meta name="description" content="Yiting Zhong — city planning, spatial data and design.">
+<link rel="stylesheet" href="assets/css/site.css">
+<style>
+  .stage { position: sticky; top: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+  .scene { position: relative; flex: 1; min-height: 0; }
+  .card, .hit { --h: clamp(120px, 25vh, 230px); position: absolute; left: 0; top: 0; width: var(--h); height: var(--h); margin: calc(var(--h) * -.5) 0 0 calc(var(--h) * -.5); border-radius: 12px; }
+  .card { will-change: transform; overflow: hidden; pointer-events: none; }
+  .hit { cursor: pointer; }
+  .hello { position: absolute; left: var(--pad); top: 10px; z-index: 1; pointer-events: none; transition: opacity .4s; }
+  .hello.dim { opacity: .12; }
+  .hello h1 { font-size: clamp(28px, 4vw, 56px); font-weight: 500; letter-spacing: -.04em; line-height: 1; max-width: 9em; }
+  .hello p { color: var(--muted); margin-top: 12px; }
+  /* Project info travels with the lifted card and sits in the gap its neighbours open up. */
+  .note { position: absolute; left: 0; top: 0; width: 250px; z-index: 1500; pointer-events: none; }
+  .note > * { opacity: 0; transform: translateY(8px); transition: opacity .12s, transform .12s; }
+  .note.on > * { opacity: 1; transform: none; transition: opacity .32s ease-out, transform .38s ease-out; }
+  .note.on > *:nth-child(1) { transition-delay: .06s; } .note.on > *:nth-child(2) { transition-delay: .1s; } .note.on > *:nth-child(3) { transition-delay: .14s; }
+  .note.right { text-align: right; }
+  .note .k { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+  .note h3 { font-size: 24px; font-weight: 500; letter-spacing: -.03em; line-height: 1.05; margin: 5px 0 8px; }
+  .note .b { font-size: 13px; line-height: 1.45; color: var(--muted); }
+  .after { padding: 80px var(--pad) 120px; border-top: 1px solid var(--ink); background: var(--bg); position: relative; z-index: 2; }
+  .after a { display: flex; justify-content: space-between; font-size: clamp(28px, 5vw, 64px); font-weight: 500; letter-spacing: -.04em; padding: 14px 0; border-bottom: 1px solid var(--ink); transition: padding .3s var(--ease); }
+  .after a:hover { padding-left: 16px; }
+  @media (max-width: 720px) { .hello p { display: none; } }
+</style>
+</head>
+<body data-page="home">
+<div id="track">
+  <div class="stage">
+    <header data-site-header></header>
+    <div class="scene" id="scene">
+      <div class="note" id="note" aria-live="polite"></div>
+      <div class="hello"><h1 id="tagline"></h1><p id="intro"></p></div>
+    </div>
+  </div>
+</div>
+<section class="after">
+  <a href="work.html"><span>All work</span><span>→</span></a>
+  <a href="about.html"><span>About</span><span>→</span></a>
+  <a href="thoughts.html"><span>Thoughts</span><span>→</span></a>
+</section>
+<footer data-site-footer></footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+document.getElementById("tagline").textContent = SITE.tagline;
+document.getElementById("intro").textContent = SITE.intro;
+
+const LIST = live(), N = LIST.length;
+const scene = document.getElementById("scene"), track = document.getElementById("track");
+const M = Math.max(20, N * 2);                     // enough cards to make a full, looping ribbon even with few projects
+for (let k = 0; k < M; k++) {
+  const P = LIST[k % N];
+  scene.insertAdjacentHTML("beforeend", `<div class="card">${coverHTML(P)}</div><a class="hit" href="${projectUrl(P)}" aria-label="${P.title}"></a>`);
+}
+// The pointer is tested against `hits`, which stay in the row, so a card that lifts away never loses its own hover.
+const cards = [...scene.querySelectorAll(".card")], hits = [...scene.querySelectorAll(".hit")];
+const pop = new Array(M).fill(0), push = new Array(M).fill(0);
+let hover = -1, drift = 0, last = performance.now();
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+// Every card leans the same way while the row climbs to the right, so each sits partly behind the one before it.
+const FACE = 14, SQUASH = 0.9, ROW = -12 * Math.PI / 180;
+const note = document.getElementById("note"), hello = document.querySelector(".hello");
+let shownFor = -1, noteT;
+
+function frame(now) {
+  const dt = Math.min(64, now - last); last = now;
+  const W = scene.clientWidth, H = scene.clientHeight, size = cards[0].offsetHeight;
+  const gap = size * 0.5, dx = Math.cos(ROW) * gap, dy = Math.sin(ROW) * gap;
+  const ax = W * 0.46, ay = H * 0.7;
+  if (hover < 0) drift += dt * 0.0001;                            // slow drift when nobody is touching it
+  const pos = scrollY / (gap * 1.6) + drift;
+
+  cards.forEach((el, k) => {
+    let d = k - pos;
+    d -= Math.round(d / M) * M;                                   // wrap around
+    pop[k] += ((k === hover ? 1 : 0) - pop[k]) * 0.075;           // eases straight to its target: no bounce
+    const p = pop[k];
+    // The cards in front of the hovered one bunch up toward the viewer, opening a gap for it.
+    let want = 0;
+    if (hover >= 0 && k !== hover) {
+      let rel = k - hover; rel -= Math.round(rel / M) * M;
+      if (rel < 0) want = -0.95 * Math.exp((rel + 1) * 0.55);
+    }
+    push[k] += (want - push[k]) * 0.075;
+    const u = d + push[k];
+    // A pronounced curve: almost level near the viewer, sweeping upward as it recedes.
+    const x = ax + u * dx, y = ay + u * dy - size * (u > 0 ? 0.024 : 0.0065) * u * u;
+    const rise = Math.min(size * 0.85, Math.max(0, y - size * 0.5 - 10));
+    const rest = `translate(${x}px, ${y}px)`;
+    // Hover: the card rises straight up and turns to face you.
+    el.style.transform = `${rest} translateY(${-rise * p}px) skewY(${FACE * (1 - p)}deg) scaleX(${SQUASH + (1 - SQUASH) * p})`;
+    el.style.zIndex = 200 - Math.round(d * 4);
+    el.style.opacity = clamp(M / 2 - 0.6 - Math.abs(d), 0, 1);
+    hits[k].style.transform = `${rest} skewY(${FACE}deg) scaleX(${SQUASH})`;
+    hits[k].style.zIndex = 1000 - Math.round(d * 4);
+    hits[k].style.display = Math.abs(d) < M / 2 - 1 ? "" : "none";
+    if (k === shownFor) {
+      const top = y - size * 0.5 - rise, nw = note.offsetWidth, room = x - size / 2 - 22 - nw, beside = room > 14;
+      note.classList.toggle("right", beside);
+      const nx = beside ? room : Math.max(14, x - size / 2), ny = beside ? top + 4 : top - note.offsetHeight - 14;
+      note.style.transform = `translate(${nx}px, ${ny}px)`;
+      const h = hello.getBoundingClientRect(), s = scene.getBoundingClientRect();
+      hello.classList.toggle("dim", note.classList.contains("on") && nx < h.right - s.left + 10 && ny < h.bottom - s.top + 10);
+    }
+  });
+  requestAnimationFrame(frame);
+}
+
+// The info fades out fast, then fades in line by line beside whichever card is now lifted.
+function showNote(k) {
+  clearTimeout(noteT);
+  note.classList.remove("on");
+  if (k < 0) { noteT = setTimeout(() => { shownFor = -1; hello.classList.remove("dim"); }, 200); return; }
+  noteT = setTimeout(() => {
+    const P = LIST[k % N];
+    note.innerHTML = `<p class="k">${CATS[P.cat]} · ${year(P)}</p><h3>${P.title}</h3><p class="b">${P.blurb}</p>`;
+    shownFor = k;
+    requestAnimationFrame(() => requestAnimationFrame(() => note.classList.add("on")));
+  }, shownFor < 0 ? 0 : 110);
+}
+hits.forEach((el, k) => {
+  el.addEventListener("mouseenter", () => { hover = k; showNote(k); });
+  el.addEventListener("mouseleave", () => { if (hover === k) { hover = -1; showNote(-1); } });
+  el.addEventListener("focus", () => { hover = k; showNote(k); });
+  el.addEventListener("blur", () => { if (hover === k) { hover = -1; showNote(-1); } });
+});
+
+track.style.height = "calc(100vh + 1800px)";
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
