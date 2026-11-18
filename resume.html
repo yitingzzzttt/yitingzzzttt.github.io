@@ -4,22 +4,175 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Resume — Yiting Zhong</title>
+<meta name="description" content="Education, experience and selected projects of Yiting Zhong.">
 <link rel="stylesheet" href="assets/css/site.css">
+<style>
+  /* One three-column grid for the whole page, spanning the same width as the header:
+     section name | content | dates, right-aligned to the page edge. */
+  .cv { --cols: minmax(130px, 2fr) minmax(0, 7fr) minmax(120px, 2fr); padding: 0 var(--pad) 120px; }
+  .cv-head { display: grid; grid-template-columns: var(--cols); gap: 0 32px; padding: 64px 0 64px; }
+  .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* kept for screen readers and search, not shown */
+  .cv-head p { grid-column: 2; font-size: 22px; line-height: 1.55; letter-spacing: -.005em; max-width: 34em; }
+  /* Words light up one after another as the page scrolls. */
+  /* The intro holds its place while the page scrolls, so the words have time to light up; then the page moves on. */
+  .js .cv-head { min-height: 62vh; align-items: start; }
+  .js .cv-head p { position: sticky; top: 110px; }
+  .js .cv-head p .w { color: #cfccc5; transition: color .25s; }
+  .js .cv-head p .w.lit { color: var(--ink); }
+  .cv section { display: grid; grid-template-columns: var(--cols); gap: 0 32px; padding: 32px 0 20px; border-top: 1px solid var(--line); }
+  .cv h2 { grid-column: 1; font-size: 15px; font-weight: 500; color: var(--muted); }
+  .item { grid-column: 2 / 4; display: grid; grid-template-columns: subgrid; margin-bottom: 26px; }
+  .item .what { grid-column: 1; }
+  .item .when { grid-column: 2; text-align: right; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; padding-top: 1px; }
+  .item h3 { font-size: 17px; font-weight: 600; letter-spacing: -.01em; line-height: 1.3; }
+  .item .org { margin-top: 2px; }
+  .item .sub, .item p { color: var(--muted); margin-top: 6px; line-height: 1.55; max-width: 40em; }
+  .cv dl { grid-column: 2 / 4; display: grid; grid-template-columns: 180px 1fr; gap: 8px 24px; margin-bottom: 12px; }
+  .cv dt { color: var(--muted); } .cv dd { margin: 0; }
+
+  /* Experience: the same rows, threaded on a thin line with a dot per role. */
+  .tl { grid-column: 2 / 4; display: grid; grid-template-columns: subgrid; list-style: none; padding: 0; margin: 0; position: relative; }
+  .tl::before { content: ""; position: absolute; left: 5px; top: 12px; bottom: 34px; width: 1px; background: var(--line); }
+  .tl .item { grid-column: 1 / -1; padding-left: 32px; position: relative; margin-bottom: 36px; }
+  .tl .dot { position: absolute; left: 0; top: 6px; width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 1.5px solid #cfcdc8; transition: background .4s, border-color .4s; }
+  .pts { list-style: none; padding: 0; margin: 8px 0 0; color: var(--muted); max-width: 44em; }
+  .pts li { position: relative; padding-left: 16px; line-height: 1.5; margin-bottom: 4px; }
+  .pts li::before { content: ""; position: absolute; left: 2px; top: .7em; width: 5px; height: 1px; background: currentColor; }
+  .tl .what { transition: opacity .6s ease-out, transform .6s ease-out; }
+  .js .tl .item:not(.on) .what { opacity: .2; transform: translateY(8px); }
+  .tl .item.on .dot { background: var(--ink); border-color: var(--ink); }
+
+
+  @media (max-width: 800px) {
+    .cv-head, .cv section { grid-template-columns: 1fr; }
+    .js .cv-head { min-height: 0; } .js .cv-head p { position: static; } .js .cv-head p .w { color: var(--ink); }
+    .cv-head p, .cv h2, .item, .tl, .cv dl { grid-column: 1; }
+    .cv h2 { margin-bottom: 18px; }
+    .item, .tl { display: block; }
+    .item .when { text-align: left; margin-top: 4px; }
+    .cv dl { grid-template-columns: 1fr; gap: 0; } .cv dd { margin-bottom: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .js .tl .item .what { opacity: 1 !important; transform: none !important; } }
+  @media print { .cv-head p .w { color: var(--ink) !important; } .tl .what { opacity: 1 !important; transform: none !important; } [data-site-header], [data-site-footer] { display: none !important; } }
+</style>
 </head>
 <body data-page="resume">
 <header data-site-header></header>
-<div class="pagehead"><div class="left"><h1>Resume</h1></div></div>
-<main class="prose">
-  <span class="placeholder-note">Placeholder — the web résumé and a PDF download go here</span>
-  <h2>Education</h2>
-  <p>Placeholder.</p>
-  <h2>Experience</h2>
-  <p>Placeholder.</p>
-  <h2>Skills</h2>
-  <p>Placeholder.</p>
-</main>
+
+<main class="cv" id="cv"></main>
 <footer data-site-footer></footer>
+
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
+<script>
+// ---------------------------------------------------------------------------
+// Experience, newest first. Edit here; the page is drawn from this list.
+// ---------------------------------------------------------------------------
+const EXPERIENCE = [
+  { dates: "Feb 2026 – Present", now: true, title: "Freelance Web Designer", org: "Textile and rug consultancy", points: [
+    "Designed and launched a WordPress site for a non-technical client.",
+    "Built product-linked inquiries, so every request tells the client exactly which item it concerns.",
+    "Added a saved-collection workspace that visitors can share with the client directly.",
+    "Delivered a spreadsheet workflow for updating the catalog; continue to maintain the site."
+  ] },
+  { dates: "Jun – Aug 2026", title: "Program Operations Assistant", org: "PREHSS, University of Pennsylvania", points: [
+    "Managed participant records, scheduling and logistics for a high-school laboratory outreach program.",
+    "Independently analyzed application, survey and mentor data.",
+    "Authored the full draft of the program's annual impact report for institutional review."
+  ] },
+  { dates: "Jun – Aug 2026", title: "Curriculum Design Assistant", org: "ISAC Program, University of Pennsylvania", points: [
+    "Helped establish two new university sustainability courses.",
+    "Researched academic, policy and multimedia sources and developed course content, modules and assignments."
+  ] },
+  { dates: "May – Aug 2025", title: "Freelance Product Rendering Designer", org: "Furniture brand", points: [
+    "Produced over 10,000 renderings covering more than 1,000 furniture products in Rhino and KeyShot.",
+    "Set up a queued batch-rendering pipeline that removed idle time between renders.",
+    "Built a tracking system for every product and view, shortening handoff to the client."
+  ] },
+  { dates: "Summers 2024 & 2025", title: "Sustainable Materials Research Assistant", org: "Syracuse Center of Excellence", points: [
+    "Built and tested mycelium composite prototypes with the research team, including a temperature- and humidity-controlled grow room.",
+    "Compared substrate mix ratios for strength testing with an engineering team.",
+    "Independently took the material beyond insulation panels toward building components: designed a modular block and a split, 3D-printed mold in Rhino that solved recurring demolding failures.",
+    "Fabricated about four half-scale modules."
+  ] },
+  { dates: "Spring 2025", title: "Design Studio Teaching Assistant", org: "Syracuse University School of Architecture", points: [
+    "Taught representation and digital modeling (Rhino, V-Ray) to two studio groups of about 30 second-year students."
+  ] },
+  { dates: "Spring 2025", title: "Fabrication Lab Assistant", org: "Syracuse University School of Architecture", points: [
+    "Supervised laser-cutting and woodshop use for students and faculty.",
+    "Troubleshot fabrication files and enforced safety procedures."
+  ] },
+  { dates: "May – Aug 2023", title: "Design Intern", org: "Ju Zhong Interior Design, Shenzhen", points: [
+    "Measured more than a dozen existing interiors on site and turned the surveys into accurate AutoCAD and Revit base drawings for the design team.",
+    "Developed and revised layout options in response to client feedback.",
+    "Joined client meetings to review design proposals."
+  ] },
+  { dates: "Jan – Apr 2023", title: "Architectural Intern", org: "Mattaforma, New York", points: [
+    "Produced diagrams, renderings and physical models for early-stage design development.",
+    "Adapted project drawings for the studio's marketing and social media."
+  ] },
+];
+const INTRO = "I work between analysis and design. Architecture taught me how to solve a problem; planning taught me how to see the whole system around it. I bring both to every project: the patience to test and revise, and the wider view of who and what a decision touches. Looking for an entry-level role from June 2027.";
+const EDUCATION = [
+  { title: "Master of City Planning", org: "University of Pennsylvania, Stuart Weitzman School of Design", sub: "Concentration in Transportation Planning", when: "Expected May 2027" },
+  { title: "Bachelor of Architecture", org: "Syracuse University, School of Architecture", sub: "Dean's List for nine semesters. Studied abroad in Florence and New York.", when: "May 2025" },
+];
+const PROJECTS_CV = [
+  { title: "Port Richmond Green Network", org: "Penn planning studio, greenspace strategy lead", when: "Spring 2026" },
+  { title: "Shenzhen Transportation Governance", org: "Penn, case study, sole author", when: "Spring 2026" },
+  { title: "Spatial Analysis & Predictive Modelling", org: "Penn coursework in R and ArcGIS Pro", when: "Spring 2026" },
+  { title: "Green Proximity: Vacant Land Prioritisation", org: "Penn GIS project, individual", when: "Fall 2025" },
+];
+const OTHER = [
+  { title: "LEED Green Associate", org: "U.S. Green Building Council", when: "2026" },
+  { title: "Community design volunteer", org: "Asha Laaya Farm, wood framing and rammed earth", when: "Summer 2024" },
+];
+const SKILLS = [
+  ["GIS & data", "ArcGIS Pro, ArcGIS Online, R, Excel, Census / ACS"],
+  ["Transportation", "PTV Visum, Vissim, Synchro"],
+  ["Graphics & layout", "Illustrator, InDesign, Photoshop"],
+  ["Design & modeling", "Rhino, Grasshopper, AutoCAD, Revit, SketchUp"],
+  ["Rendering", "KeyShot, V-Ray, Enscape"],
+  ["Web", "WordPress, Elementor, HTML, CSS"],
+  ["Office", "Microsoft Word, Excel, PowerPoint; Google Workspace"],
+  ["Making", "Laser cutting, CNC, 3D printing, woodworking"],
+  ["Languages", "Mandarin, English, Cantonese"],
+];
+
+const sec = (name, body) => `<section><h2>${name}</h2>${body}</section>`;
+const row = (x, inner) => `<div class="item"><div class="what">${inner}</div><span class="when">${x.when}</span></div>`;
+const list = (items) => items.map((x) => row(x, `<h3>${x.title}</h3><div class="org">${x.org}</div>${x.sub ? `<div class="sub">${x.sub}</div>` : ""}`)).join("");
+const timeline = `<ol class="tl">${EXPERIENCE.map((e) => `<li class="item"><span class="dot"></span><div class="what"><h3>${e.title}</h3><div class="org">${e.org}</div><ul class="pts">${e.points.map((x) => `<li>${x}</li>`).join("")}</ul></div><span class="when">${e.dates}</span></li>`).join("")}</ol>`;
+document.getElementById("cv").innerHTML =
+  `<div class="cv-head"><h1 class="vh">Resume</h1><p>${INTRO}</p></div>` +
+  sec("Education", list(EDUCATION)) +
+  sec("Experience", timeline) +
+  sec("Certification<br>and volunteering", list(OTHER)) +
+  sec("Skills", `<dl>${SKILLS.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>`);
+
+// ---- intro: each word lights up as the paragraph scrolls past ----
+document.documentElement.classList.add("js");
+const introEl = document.querySelector(".cv-head p");
+introEl.innerHTML = introEl.textContent.split(" ").map((w) => `<span class="w">${w}</span>`).join(" ");
+const ws = [...introEl.querySelectorAll(".w")];
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function light() {
+  // Driven by how far the page has scrolled: a few words are lit at the top, all of them after about half a screen.
+  let k = still ? 1 : 0.1 + (scrollY / (innerHeight * 0.32)) * 0.9;
+  const n = Math.round(Math.max(0, Math.min(1, k)) * ws.length);
+  ws.forEach((w, i) => w.classList.toggle("lit", i < n));
+}
+addEventListener("scroll", light, { passive: true });
+addEventListener("resize", light);
+light();
+
+// ---- each role comes into focus as it reaches the lower part of the window ----
+const items = [...document.querySelectorAll(".tl .item")];
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function reveal() { items.forEach((li) => li.classList.toggle("on", reduce || li.querySelector(".dot").getBoundingClientRect().top < innerHeight * 0.75)); }
+addEventListener("scroll", reveal, { passive: true });
+addEventListener("resize", reveal);
+reveal();
+</script>
 </body>
 </html>
