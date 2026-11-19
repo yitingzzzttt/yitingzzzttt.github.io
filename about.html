@@ -4,23 +4,318 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>About — Yiting Zhong</title>
+<meta name="description" content="A user manual for Yiting Zhong: how she lives, talks, decides and works, and what she makes for fun.">
 <link rel="stylesheet" href="assets/css/site.css">
+<style>
+  /* One chapter per screen; each scroll lands on the next one. */
+  html { scroll-snap-type: y mandatory; }
+  [data-site-header] { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); }
+  .ch { min-height: 100vh; min-height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always;
+        display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 0 48px; align-items: center; padding: 80px var(--pad) 64px; }
+  .appendix { scroll-snap-align: start; }
+  .k { font-size: 14px; color: var(--muted); margin-bottom: 22px; }
+  .big { font-size: clamp(34px, 5.4vw, 80px); font-weight: 500; letter-spacing: -.04em; line-height: 1.02; }
+  .big .ln { display: block; overflow: hidden; padding-bottom: .06em; }
+  .big .ln > span { display: block; }
+  .say { font-size: 16px; line-height: 1.6; color: #55524c; max-width: 32em; margin-top: 26px; }
+  .say p { margin-bottom: 10px; }
+  .say a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .ch.intro { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .ch.intro .big { font-size: clamp(44px, 8vw, 124px); }
+
+  /* Hand-drawn doodles: strokes draw on when the chapter arrives, then keep a gentle hand-made jitter. */
+  .doodle { width: 100%; max-width: 420px; justify-self: center; overflow: visible; }
+  .doodle * { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .doodle .fill { fill: var(--ink); stroke: none; }
+  .doodle g.boil { filter: url(#boil); }
+  .js .doodle path, .js .doodle circle, .js .doodle ellipse, .js .doodle rect, .js .doodle polyline { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .js .ch.in .doodle path, .js .ch.in .doodle circle, .js .ch.in .doodle ellipse, .js .ch.in .doodle rect, .js .ch.in .doodle polyline {
+    stroke-dashoffset: 0; transition: stroke-dashoffset 1s cubic-bezier(.5, 0, .2, 1); transition-delay: calc(.25s + var(--d, 0) * .12s); }
+  .js .doodle .fill { opacity: 0; } .js .ch.in .doodle .fill { opacity: 1; transition: opacity .3s .9s; }
+
+  /* Text: lines rise as the chapter arrives. */
+  .js .ch .big .ln > span { opacity: 0; }
+  .js .ch.in .big .ln > span { opacity: 1; transition: opacity .9s ease-out; transition-delay: calc(var(--n, 0) * .12s); }
+  .js .ch .k, .js .ch .say { opacity: 0; transform: translateY(12px); }
+  .js .ch.in .k, .js .ch.in .say { opacity: 1; transform: none; transition: opacity .6s .35s, transform .6s .35s; }
+
+  /* One keyword in each chapter's body text: jitters like the doodles, with a scribbled underline drawn under it. */
+  .kw { position: relative; display: inline-block; font-style: normal; color: var(--ink); filter: url(#boilText); }
+  .kw .ul { position: absolute; left: -2%; right: -2%; bottom: -.08em; width: 104%; height: .26em; overflow: visible; filter: url(#boil); }
+  .kw .ul path { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .js .kw .ul path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .js .ch.in .kw .ul path { stroke-dashoffset: 0; transition: stroke-dashoffset .7s cubic-bezier(.5, 0, .2, 1) .9s; }
+
+  /* Face that changes its mind */
+  .mouth2 { opacity: 0; }
+  .ch.in .mouth1 { animation: hide 0s 1.8s forwards; } .ch.in .mouth2 { animation: show 0s 1.8s forwards; }
+  @keyframes hide { to { opacity: 0; } } @keyframes show { to { opacity: 1; } }
+
+
+  /* ---- Appendix: after the last chapter the page scrolls freely ---- */
+  .appendix { padding: 96px var(--pad) 40px; border-top: 1px solid var(--line); }
+  .appendix .intro-line { font-size: 15px; color: var(--muted); margin-bottom: 64px; }
+  .apx { display: grid; grid-template-columns: minmax(130px, 2fr) minmax(0, 9fr); gap: 0 32px; padding: 0 0 88px; }
+  .apx h2 { font-size: 15px; font-weight: 500; color: var(--muted); padding-top: 4px; }
+  .apx .lead { font-size: 22px; line-height: 1.4; letter-spacing: -.01em; max-width: 30em; margin-bottom: 28px; }
+  .wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 18px; }
+  .wall figure { margin: 0; }
+  .wall .ph { aspect-ratio: 1; border: 1px dashed #cfcac0; border-radius: 4px; background: var(--paper); display: grid; place-items: center; color: var(--muted); font-size: 12px; }
+  .wall figcaption { font-size: 14px; margin-top: 8px; }
+  .shop { max-width: 560px; font: 14px/1.6 ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .shop .row { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; }
+  .shop .row .dots { flex: 1; border-bottom: 1px dotted #b9b6ae; transform: translateY(-4px); }
+  .shop .muted-row { color: #b9b6ae; }
+  .teaser { display: block; max-width: 560px; padding: 22px 24px; border: 1px solid var(--line); border-radius: 6px; transition: border-color .2s; }
+  .teaser:hover { border-color: var(--ink); }
+  .teaser .k2 { font-size: 13px; color: var(--muted); }
+  .teaser b { display: block; font-size: 19px; font-weight: 500; margin: 6px 0 4px; }
+  .hello { display: block; font-size: clamp(48px, 9vw, 140px); font-weight: 500; letter-spacing: -.05em; line-height: .95; padding: 40px 0 8px; }
+  .hello:hover .arr { transform: translateX(14px); }
+  .hello .arr { display: inline-block; transition: transform .3s; }
+  .mail { font-size: 16px; text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 800px) { .apx { grid-template-columns: 1fr; gap: 14px; } }
+
+  .pager { position: fixed; right: var(--pad); bottom: 22px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; z-index: 5; }
+  @media (max-width: 800px) {
+    html { scroll-snap-type: y proximity; }
+    .ch, .ch.intro { grid-template-columns: 1fr; gap: 28px; align-content: center; }
+    .doodle { max-width: 240px; justify-self: start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-snap-type: none; }
+    .doodle g.boil, .kw, .kw .ul { filter: none; }
+    .js .doodle * { stroke-dashoffset: 0 !important; transition: none !important; }
+    .js .ch .big .ln > span, .js .ch .k, .js .ch .say { transform: none !important; opacity: 1 !important; }
+  }
+</style>
 </head>
 <body data-page="about">
 <header data-site-header></header>
-<div class="pagehead"><div class="left"><h1>About</h1></div></div>
-<main class="prose">
-  <span class="placeholder-note">Placeholder text — to be written together</span>
-  <p class="lead">One or two sentences about who you are and what you care about.</p>
-  <h2>Background</h2>
-  <p>Placeholder. Where you grew up, architecture at Syracuse, planning at Penn.</p>
-  <h2>How I work</h2>
-  <p>Placeholder. Analyse, draw, deliver.</p>
-  <h2>Skills</h2>
-  <p>Placeholder. GIS &amp; data · Graphics &amp; layout · Design &amp; modelling · Languages.</p>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="boil"><feTurbulence id="boilNoise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+  <filter id="boilText"><feTurbulence id="boilNoise2" type="fractalNoise" baseFrequency="0.05" numOctaves="1" seed="1"/><feDisplacementMap in="SourceGraphic" scale="1.3"/></filter>
+</svg>
+
+<main id="book">
+  <h1 class="vh" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)">About Yiting</h1>
+
+  <section class="ch intro">
+    <div><div class="big"><span class="ln"><span>A user manual</span></span><span class="ln"><span>for Yiting.</span></span></div>
+      <div class="say"><p>Scroll. <em class="kw">One page at a time<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em>.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- an open booklet with a down arrow -->
+      <path style="--d:0" pathLength="1" d="M40 70 C80 58 120 62 150 78 C182 62 222 58 262 70 L262 198 C222 186 182 190 150 206 C120 190 80 186 40 198 Z"/>
+      <path style="--d:1" pathLength="1" d="M150 78 L150 206"/>
+      <path style="--d:2" pathLength="1" d="M62 98 C88 92 110 94 132 102 M62 122 C88 116 110 118 132 126 M62 146 C84 140 104 142 124 148"/>
+      <path style="--d:3" pathLength="1" d="M170 102 C192 94 214 92 240 98 M170 126 C192 118 214 116 240 122"/>
+      <path style="--d:4" pathLength="1" d="M206 140 C207 158 205 172 206 186 M194 174 L206 188 L219 173"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="Lifestyle">
+    <div><p class="k">On an ordinary day</p>
+      <div class="big"><span class="ln"><span>One thing at a time</span></span><span class="ln"><span>doesn't hold me.</span></span></div>
+      <div class="say"><p>If I'm watching TV, I'm also making something, which is how I ended up with so many crafts. A trip to a supermarket across town needs a second errand, or it feels wasted.</p><p>I leave with one plan and often come back having done <em class="kw">something else<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em>.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- TV with antennas, and a ball of yarn trailing to a hook -->
+      <rect style="--d:0" pathLength="1" x="36" y="62" width="150" height="104" rx="12"/>
+      <path style="--d:1" pathLength="1" d="M90 62 L70 30 M130 62 L152 28"/>
+      <path style="--d:1" pathLength="1" d="M60 182 L66 166 M160 182 L154 166"/>
+      <path style="--d:2" pathLength="1" d="M60 92 C80 86 100 100 120 92 C140 84 156 98 166 92"/>
+      <circle style="--d:3" pathLength="1" cx="232" cy="190" r="34"/>
+      <path style="--d:4" pathLength="1" d="M206 172 C226 190 244 168 262 186 M204 196 C226 214 246 190 264 208 M218 160 C230 180 240 200 248 222"/>
+      <path style="--d:5" pathLength="1" d="M232 156 C226 120 250 100 238 70 L246 40 M240 44 C246 40 252 42 250 50"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="Communication">
+    <div><p class="k">How to talk to me</p>
+      <div class="big"><span class="ln"><span>Be direct.</span></span><span class="ln"><span>Tell me everything</span></span><span class="ln"><span>at once.</span></span></div>
+      <div class="say"><p>Text or in person both work. If something isn't working, tell me <em class="kw">exactly what<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em>, and what you would do instead.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- two speech bubbles: one long, one answering with an idea -->
+      <path style="--d:0" pathLength="1" d="M30 50 C30 36 40 30 56 30 L196 32 C212 32 220 40 220 54 L218 112 C218 126 210 132 194 132 L92 132 L60 160 L66 132 L54 132 C38 132 30 124 30 110 Z"/>
+      <path style="--d:1" pathLength="1" d="M56 62 L190 64 M56 84 L176 86 M56 106 L150 106"/>
+      <path style="--d:2" pathLength="1" d="M150 168 C150 158 158 152 170 152 L254 154 C266 154 272 160 272 172 L270 210 C270 222 264 226 252 226 L236 226 L248 248 L216 226 L170 226 C158 226 150 220 150 208 Z"/>
+      <path style="--d:3" pathLength="1" d="M210 168 C200 168 194 176 196 186 C198 194 204 196 204 204 L218 204 C218 196 224 194 226 186 C228 176 220 168 210 168 Z M204 212 L218 212"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="Boundaries">
+    <div><p class="k">One thing I'll ask of you</p>
+      <div class="big"><span class="ln"><span>Easy to work with.</span></span><span class="ln"><span>Boundaries set early.</span></span></div>
+      <div class="say"><p>What bothers me is being asked not to do something and then seeing it <em class="kw">happen again<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em>, or being contacted at times I've said I'm off.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- a door with a hanging sign, and a moon -->
+      <rect style="--d:0" pathLength="1" x="70" y="40" width="120" height="196" rx="4"/>
+      <circle style="--d:1" pathLength="1" cx="170" cy="144" r="5"/>
+      <path style="--d:2" pathLength="1" d="M108 70 L130 52 L152 70"/>
+      <rect style="--d:3" pathLength="1" x="92" y="70" width="76" height="44" rx="6"/>
+      <path style="--d:4" pathLength="1" d="M104 92 C112 84 120 100 128 92 C136 84 144 100 154 92"/>
+      <path style="--d:5" pathLength="1" d="M252 60 C232 62 220 80 224 98 C228 116 248 124 264 116 C248 112 238 98 240 84 C242 72 248 64 252 60 Z"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="How I decide">
+    <div><p class="k">Before I say yes</p>
+      <div class="big"><span class="ln"><span>Evidence first.</span></span><span class="ln"><span>Then I come round</span></span><span class="ln"><span>to it too.</span></span></div>
+      <div class="say"><p>I read, compare and check before I choose. By the time I've decided, I usually <em class="kw">believe in it<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em>.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- a balance: papers on one side, a small heart on the other -->
+      <path style="--d:0" pathLength="1" d="M150 40 L150 220 M110 222 L190 222"/>
+      <path style="--d:1" pathLength="1" d="M60 84 L240 74"/>
+      <path style="--d:2" pathLength="1" d="M60 84 L36 140 L84 140 Z M240 74 L216 130 L264 130 Z"/>
+      <path style="--d:3" pathLength="1" d="M44 134 L48 112 L76 114 L72 136 M50 120 L70 122"/>
+      <path style="--d:4" pathLength="1" d="M240 122 C232 112 220 116 224 106 C226 98 236 98 240 106 C244 98 254 98 256 106 C258 116 246 112 240 122 Z"/>
+      <circle style="--d:0" pathLength="1" cx="150" cy="38" r="6"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="How I work best">
+    <div><p class="k">If we work together</p>
+      <div class="big"><span class="ln"><span>A clear goal,</span></span><span class="ln"><span>a part I own,</span></span><span class="ln"><span>regular check-ins.</span></span></div>
+      <div class="say"><p>Working alone too long, I lose perspective, so I like to meet regularly and trade feedback.</p><p>My favorite moments: coming up with the idea, and <em class="kw">making the thing<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em>.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- a checklist and a little flag on a hill -->
+      <rect style="--d:0" pathLength="1" x="34" y="40" width="130" height="176" rx="8"/>
+      <path style="--d:1" pathLength="1" d="M54 78 L62 88 L78 66 M90 78 L146 76"/>
+      <path style="--d:2" pathLength="1" d="M54 122 L62 132 L78 110 M90 122 L140 120"/>
+      <path style="--d:3" pathLength="1" d="M56 156 L76 156 L76 176 L56 176 Z M90 166 L144 164"/>
+      <path style="--d:4" pathLength="1" d="M180 226 C200 190 240 186 276 226"/>
+      <path style="--d:5" pathLength="1" d="M228 196 L228 120 M228 122 L262 134 L228 148"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="Fixing things">
+    <div><p class="k">What I can't leave alone</p>
+      <div class="big"><span class="ln"><span>If something is clumsy,</span></span><span class="ln"><span>I rebuild it.</span></span></div>
+      <div class="say"><p>My Kindle sat unused because it couldn't open the web novels I actually read, so I worked out how to make it. My TV box took five to eight clicks to open an app; with AI's help I rebuilt its home screen.</p><p>Lately, with AI, I feel I can make <em class="kw">far more<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em> than I could before.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- a remote control and a wrench -->
+      <rect style="--d:0" pathLength="1" x="54" y="40" width="70" height="186" rx="22"/>
+      <circle style="--d:1" pathLength="1" cx="89" cy="82" r="16"/>
+      <path style="--d:2" pathLength="1" d="M72 124 L80 124 M98 124 L106 124 M72 150 L80 150 M98 150 L106 150 M72 176 L80 176 M98 176 L106 176"/>
+      <path style="--d:3" pathLength="1" d="M168 206 L232 104"/>
+      <path style="--d:4" pathLength="1" d="M226 112 C214 100 220 76 242 70 L236 92 L252 100 L268 84 C270 108 252 124 232 116"/>
+      <path style="--d:5" pathLength="1" d="M160 216 C154 210 158 200 166 202 C174 204 174 216 166 220 C163 221 161 219 160 216 Z"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="What I notice">
+    <div><p class="k">Where to find me on a weekend</p>
+      <div class="big"><span class="ln"><span>Every item I buy</span></span><span class="ln"><span>has its own</span></span><span class="ln"><span>supermarket.</span></span></div>
+      <div class="say"><p>Supermarkets are my favorite places to explore, especially a chain I haven't tried yet. Pricing, product range and the interior always say a lot about each other, so I compare them for fun.</p><p>It has made my shopping oddly specific: every item has the one store I buy it from, so some days I <em class="kw">visit several<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em>.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- a shopping cart with a few things in it -->
+      <path style="--d:0" pathLength="1" d="M30 60 L62 60 L94 170 L236 170"/>
+      <path style="--d:1" pathLength="1" d="M70 86 L256 84 L238 148 L88 150"/>
+      <circle style="--d:2" pathLength="1" cx="112" cy="200" r="14"/>
+      <circle style="--d:2" pathLength="1" cx="214" cy="200" r="14"/>
+      <path style="--d:3" pathLength="1" d="M120 84 L118 50 L148 50 L146 84"/>
+      <path style="--d:4" pathLength="1" d="M168 84 C164 60 196 56 196 84 M182 58 L186 44"/>
+      <path style="--d:5" pathLength="1" d="M206 84 L210 64 C214 56 226 56 228 66 L232 84"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="Exploring a city">
+    <div><p class="k">In a new city</p>
+      <div class="big"><span class="ln"><span>I learn a city</span></span><span class="ln"><span>on foot.</span></span></div>
+      <div class="say"><p>In New York I'd plan a quick route, head out, and end up wandering with <em class="kw">no route<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em> at all; I always found something new. In the pocket gardens squeezed between towers, I kept thinking there must be so many stories happening there.</p><p>In a new city I look up what's on that weekend; in Shanghai that meant a lot of hands-on workshops. In Philadelphia I head out of town. In Vancouver it was a library downtown, for the atmosphere.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- a wandering walking route between a few pins -->
+      <path style="--d:0" pathLength="1" d="M40 220 C70 200 50 170 84 160 C120 150 110 120 140 112 C176 102 150 70 186 62 C214 56 220 92 246 84 C262 80 262 60 256 46"/>
+      <path style="--d:1" pathLength="1" d="M40 220 C34 208 34 200 40 194 C46 200 46 208 40 220 Z"/>
+      <path style="--d:2" pathLength="1" d="M140 112 C132 98 132 88 140 82 C148 88 148 98 140 112 Z"/>
+      <path style="--d:3" pathLength="1" d="M256 46 C248 32 248 22 256 16 C264 22 264 32 256 46 Z"/>
+      <path style="--d:4" pathLength="1" d="M190 170 L190 222 M170 222 L212 222 M176 184 C176 166 204 166 204 184 C204 196 176 196 176 184"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="Things I've made">
+    <div><p class="k">What my hands are busy with</p>
+      <div class="big"><span class="ln"><span>If it can be made</span></span><span class="ln"><span>by hand, I've</span></span><span class="ln"><span>probably tried.</span></span></div>
+      <div class="say"><p>A crochet bag, a wooden folding chair as a kid, press-on nails, ceramics, a lot of jigsaws and Lego. And the furniture layout of my own home, which I'm <em class="kw">still pleased with<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em>.</p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- a crochet bag and a folding chair -->
+      <path style="--d:0" pathLength="1" d="M36 110 L136 108 L126 222 L48 224 Z"/>
+      <path style="--d:1" pathLength="1" d="M60 110 C58 66 114 64 112 108"/>
+      <path style="--d:2" pathLength="1" d="M44 136 L130 134 M46 162 L128 160 M48 188 L127 186 M66 110 L62 224 M90 110 L88 224 M114 109 L110 223"/>
+      <path style="--d:3" pathLength="1" d="M190 60 L264 224 M264 60 L190 224"/>
+      <path style="--d:4" pathLength="1" d="M200 60 L254 60 M196 142 L258 142"/>
+      <path style="--d:5" pathLength="1" d="M186 224 L200 224 M254 224 L268 224"/>
+    </g></svg>
+  </section>
+
+  <section class="ch" data-name="People get me wrong">
+    <div><p class="k">One thing people get wrong</p>
+      <div class="big"><span class="ln"><span>I look serious.</span></span><span class="ln"><span>I'm actually</span></span><span class="ln"><span>very funny.</span></span></div>
+      <div class="say"><p>Most friends say I turned out much <em class="kw">more fun<svg class="ul" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1 6 C22 2 46 9 70 4 C82 2 92 6 99 5"/></svg></em> than they expected.</p><p><a href="contact.html">Say hello</a></p></div></div>
+    <svg class="doodle" viewBox="0 0 300 260" aria-hidden="true"><g class="boil">
+      <!-- a face that starts flat and then grins -->
+      <circle style="--d:0" pathLength="1" cx="150" cy="130" r="92"/>
+      <path style="--d:1" pathLength="1" d="M108 106 L108 122 M192 106 L192 122"/>
+      <path class="mouth1" style="--d:2" pathLength="1" d="M112 168 L188 168"/>
+      <path class="mouth2" pathLength="1" style="stroke-dashoffset:0" d="M106 156 C124 194 176 194 194 156"/>
+      <path class="mouth2" pathLength="1" style="stroke-dashoffset:0" d="M74 92 C66 84 62 74 64 64 M230 92 C238 84 242 74 240 64"/>
+    </g></svg>
+  </section>
+
+<section class="appendix" id="appendix">
+  <p class="intro-line">That's the manual. The rest is the appendix: scroll as you like.</p>
+
+  <div class="apx">
+    <h2>Things I've made</h2>
+    <div><div class="wall"><figure><div class="ph">Photo coming</div><figcaption>Crochet bag</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Wooden folding chair</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Press-on nails</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Ceramics</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Jigsaws</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Lego</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>My home's furniture layout</figcaption></figure></div></div>
+  </div>
+
+  <div class="apx">
+    <h2>Where I buy what</h2>
+    <div><div class="shop"><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div></div></div>
+  </div>
+
+  <div class="apx">
+    <h2>Lately</h2>
+    <div><a class="teaser" href="thoughts.html"><span class="k2">From Thoughts</span><b>Notes, sketches and small experiments</b><span class="k2">Coming soon</span></a></div>
+  </div>
+
+</section>
 </main>
+<div class="pager" id="pager" aria-hidden="true"></div>
 <footer data-site-footer></footer>
+
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
+<script>
+document.documentElement.classList.add("js");
+const chapters = [...document.querySelectorAll(".ch")], pager = document.getElementById("pager");
+document.querySelectorAll(".big").forEach((b) => b.querySelectorAll(".ln > span").forEach((s, n) => s.style.setProperty("--n", n)));
+
+// A chapter plays its drawing and text once it fills most of the screen; leaving resets it, so it plays again.
+const io = new IntersectionObserver((es) => es.forEach((e) => {
+  e.target.classList.toggle("in", e.intersectionRatio > 0.55);
+  if (e.intersectionRatio > 0.55) pager.textContent = `${chapters.indexOf(e.target) + 1} / ${chapters.length}`;
+}), { threshold: [0, 0.55, 0.8] });
+chapters.forEach((c) => io.observe(c));
+
+// Line boil: the wobble pattern changes a few times a second, like redrawn animation frames.
+const noise = document.getElementById("boilNoise");
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const noise2 = document.getElementById("boilNoise2");
+  let s = 1;
+  setInterval(() => { s = (s % 4) + 1; noise.setAttribute("seed", s); noise2.setAttribute("seed", s); }, 130);
+}
+
+// Snap one chapter at a time only inside the manual; once the appendix comes up, scrolling is free.
+const appendix = document.getElementById("appendix");
+function snapMode() {
+  const free = appendix.getBoundingClientRect().top < innerHeight * 0.5;
+  document.documentElement.style.scrollSnapType = free ? "none" : "";
+  pager.style.opacity = free ? 0 : 1;
+}
+addEventListener("scroll", snapMode, { passive: true });
+snapMode();
+</script>
 </body>
 </html>
