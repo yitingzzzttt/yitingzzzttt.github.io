@@ -4,29 +4,172 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Contact — Yiting Zhong</title>
+<meta name="description" content="Contact Yiting Zhong, or leave an anonymous note on the bubble board.">
 <link rel="stylesheet" href="assets/css/site.css">
+<style>
+  body { overflow-x: hidden; }
+  .page { display: grid; grid-template-columns: minmax(260px, 3fr) minmax(0, 8fr); min-height: calc(100vh - 60px); min-height: calc(100dvh - 60px); }
+
+  /* Left: how to reach me */
+  .info { padding: 48px var(--pad) 40px; display: flex; flex-direction: column; gap: 28px; position: relative; z-index: 3; background: var(--bg); }
+  .info h1 { font-size: clamp(30px, 3vw, 44px); font-weight: 500; letter-spacing: -.035em; line-height: 1.05; }
+  .info dl { display: grid; gap: 14px; }
+  .info dt { font-size: 13px; color: var(--muted); }
+  .info dd { margin: 2px 0 0; font-size: 16px; }
+  .info dd a { text-decoration: underline; text-underline-offset: 3px; }
+  .info .open { font-size: 15px; line-height: 1.55; color: #55524c; max-width: 24em; }
+
+  /* Right: the board */
+  .board { position: relative; overflow: hidden; border-left: 1px solid var(--line); }
+  .board .label { position: absolute; left: 28px; top: 24px; font-size: 13px; color: var(--muted); z-index: 2; }
+  .bubble { position: absolute; left: 0; top: 0; display: grid; place-items: center; text-align: center; border-radius: 50%; cursor: default; will-change: transform; }
+  .bubble svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: url(#boil); }
+  .bubble circle { fill: rgba(255, 255, 255, .78); stroke: var(--ink); stroke-width: 1.6; }
+  .bubble .shine { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; }
+  .bubble p { position: relative; font-size: 13.5px; line-height: 1.35; padding: 0 16%; color: #2b2a27; }
+  .bubble.mine circle { fill: #fff; }
+  .bubble.mine p { color: var(--ink); }
+
+  /* Composer at the bottom of the board */
+  .compose { position: absolute; left: 24px; right: 24px; bottom: 22px; z-index: 4; display: flex; gap: 10px; align-items: flex-end; background: var(--bg); border: 1px solid var(--ink); border-radius: 28px; padding: 8px 8px 8px 20px; }
+  .compose textarea { flex: 1; border: 0; resize: none; font: inherit; font-size: 15px; line-height: 1.45; padding: 8px 0; max-height: 120px; outline: none; background: transparent; }
+  .compose button { flex: none; height: 40px; padding: 0 18px; border-radius: 999px; background: var(--ink); color: var(--bg); font-size: 14px; }
+  .compose button:disabled { opacity: .3; }
+  .compose .count { position: absolute; right: 120px; bottom: -18px; font-size: 11px; color: var(--muted); }
+  .toast { position: absolute; left: 50%; bottom: 96px; transform: translate(-50%, 10px); z-index: 5; font-size: 14px; background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 999px; opacity: 0; transition: opacity .35s, transform .35s; pointer-events: none; white-space: nowrap; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 800px) {
+    .page { grid-template-columns: 1fr; }
+    .board { height: 78vh; border-left: 0; border-top: 1px solid var(--line); }
+    .toast { white-space: normal; width: 80%; text-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bubble svg { filter: none; } }
+</style>
 </head>
 <body data-page="contact">
 <header data-site-header></header>
-<div class="pagehead"><div class="left"><h1>Contact</h1></div></div>
-<main class="prose">
-  <p class="lead">I am looking for an entry-level role starting June 2027. If my work fits what your team does, I would love to talk.</p>
-  <h2>Email</h2>
-  <p><a id="c-email" style="text-decoration:underline;text-underline-offset:4px"></a></p>
-  <h2>LinkedIn</h2>
-  <p><a id="c-li" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:4px">Yiting Zhong</a></p>
-  <h2>Based in</h2>
-  <p id="c-loc"></p>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="boil"><feTurbulence id="boilNoise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+</svg>
+
+<main class="page">
+  <section class="info">
+    <h1>Get in touch.</h1>
+    <p class="open">Looking for an entry-level role from June 2027. Or leave an anonymous note on the board.</p>
+    <dl>
+      <div><dt>Email</dt><dd><a id="c-email"></a></dd></div>
+      <div><dt>LinkedIn</dt><dd><a id="c-li" target="_blank" rel="noopener">Yiting Zhong</a></dd></div>
+      <div><dt>Based in</dt><dd id="c-loc"></dd></div>
+      <div><dt>Available</dt><dd>June 2027</dd></div>
+    </dl>
+  </section>
+
+  <section class="board" id="board" aria-label="Message board">
+    <p class="label">Notes from visitors</p>
+    <form class="compose" id="compose">
+      <label class="vh" for="msg" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)">Your note</label>
+      <textarea id="msg" rows="1" maxlength="200" placeholder="Leave a note, anonymously…"></textarea>
+      <span class="count" id="count"></span>
+      <button type="submit" id="send" disabled>Blow it up</button>
+    </form>
+    <div class="toast" id="toast" role="status">Sent. It will stay on the board once I've read it.</div>
+  </section>
 </main>
-<script>
-addEventListener("DOMContentLoaded", () => {
-  const e = document.getElementById("c-email"); e.href = "mailto:" + SITE.email; e.textContent = SITE.email;
-  document.getElementById("c-li").href = SITE.linkedin;
-  document.getElementById("c-loc").textContent = SITE.location;
-});
-</script>
 <footer data-site-footer></footer>
+
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
+<script>
+document.getElementById("c-email").href = "mailto:" + SITE.email;
+document.getElementById("c-email").textContent = SITE.email;
+document.getElementById("c-li").href = SITE.linkedin;
+document.getElementById("c-loc").textContent = SITE.location;
+
+// ---------------------------------------------------------------------------
+// Approved notes. These are SAMPLES for the preview; the real ones will come
+// from the database, and only notes you have approved are shown.
+// ---------------------------------------------------------------------------
+const APPROVED = [
+  "Sample note: loved the supermarket chapter.",
+  "Sample: the doodles are so cute",
+  "Sample note from a classmate: see you in studio!",
+  "Sample: which store has the best dumplings?",
+  "Sample: great work on Port Richmond",
+  "Sample: hi :)",
+];
+
+const board = document.getElementById("board");
+const bubbles = [];
+const rand = (a, b) => a + Math.random() * (b - a);
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function makeBubble(text, opts = {}) {
+  const size = Math.round(Math.min(220, Math.max(96, 70 + text.length * 2.1)));
+  const el = document.createElement("div");
+  el.className = "bubble" + (opts.mine ? " mine" : "");
+  el.style.width = el.style.height = size + "px";
+  el.innerHTML = `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48"/><path class="shine" d="M24 36 C28 26 36 20 46 18"/></svg><p></p>`;
+  el.querySelector("p").textContent = text;
+  board.appendChild(el);
+  const W = board.clientWidth, H = board.clientHeight;
+  // Find a free spot: try a few random places and keep the one farthest from the bubbles already there.
+  let best = null, bestGap = -Infinity;
+  for (let k = 0; k < 60 && opts.x === undefined; k++) {
+    const x = rand(20, Math.max(40, W - size - 20)), y = rand(50, Math.max(70, H - size - 110));
+    const gap = Math.min(Infinity, ...bubbles.map((o) => Math.hypot(x + size / 2 - (o.x + o.size / 2), y + size / 2 - (o.y + o.size / 2)) - (size + o.size) / 2));
+    if (gap > bestGap) { bestGap = gap; best = { x, y }; }
+    if (gap > 30) break;
+  }
+  const b = {
+    el, size, mine: !!opts.mine,
+    x: opts.x ?? best.x,
+    y: opts.y ?? best.y,
+    vy: -0.12, phase: rand(0, Math.PI * 2), sway: rand(10, 26), t0: performance.now(),
+  };
+  bubbles.push(b);
+  return b;
+}
+APPROVED.forEach((m) => makeBubble(m));
+
+// Slow upward drift with a gentle sway; a bubble leaving the top comes back in from the bottom.
+function frame(now) {
+  const H = board.clientHeight;
+  bubbles.forEach((b) => {
+    if (!still) {
+      b.y += b.mine && now - b.t0 < 2600 ? -1.6 : b.vy;          // a new note rises fast at first, then settles
+      if (b.y < -b.size - 10) b.y = H + 10;
+    }
+    const dx = still ? 0 : Math.sin(now / 2200 + b.phase) * b.sway;
+    b.el.style.transform = `translate(${b.x + dx}px, ${b.y}px)`;
+  });
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// Line boil, same as the About page.
+if (!still) { const n = document.getElementById("boilNoise"); let s = 1; setInterval(() => { s = (s % 4) + 1; n.setAttribute("seed", s); }, 130); }
+
+// Composer
+const form = document.getElementById("compose"), msg = document.getElementById("msg"), send = document.getElementById("send"), count = document.getElementById("count"), toast = document.getElementById("toast");
+msg.addEventListener("input", () => {
+  msg.style.height = "auto"; msg.style.height = msg.scrollHeight + "px";
+  const n = msg.value.trim().length;
+  send.disabled = n === 0;
+  count.textContent = n > 150 ? `${200 - msg.value.length} left` : "";
+});
+msg.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = msg.value.trim();
+  if (!text) return;
+  // The new bubble rises from the composer. It lives only on this screen until the note is approved.
+  const r = form.getBoundingClientRect(), br = board.getBoundingClientRect();
+  makeBubble(text, { mine: true, x: Math.min(Math.max(20, r.left - br.left + r.width / 2 - 60), board.clientWidth - 160), y: r.top - br.top - 40 });
+  // TODO: send `text` to the database as a pending note (connected later).
+  msg.value = ""; msg.style.height = "auto"; send.disabled = true; count.textContent = "";
+  toast.classList.add("on"); clearTimeout(form._t); form._t = setTimeout(() => toast.classList.remove("on"), 3600);
+});
+</script>
 </body>
 </html>
