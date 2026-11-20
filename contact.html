@@ -36,6 +36,7 @@
   .compose button { flex: none; height: 40px; padding: 0 18px; border-radius: 999px; background: var(--ink); color: var(--bg); font-size: 14px; }
   .compose button:disabled { opacity: .3; }
   .compose .count { position: absolute; right: 120px; bottom: -18px; font-size: 11px; color: var(--muted); }
+  .empty { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); color: var(--muted); font-size: 15px; }
   .toast { position: absolute; left: 50%; bottom: 96px; transform: translate(-50%, 10px); z-index: 5; font-size: 14px; background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 999px; opacity: 0; transition: opacity .35s, transform .35s; pointer-events: none; white-space: nowrap; }
   .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
@@ -87,17 +88,12 @@ document.getElementById("c-li").href = SITE.linkedin;
 document.getElementById("c-loc").textContent = SITE.location;
 
 // ---------------------------------------------------------------------------
-// Approved notes. These are SAMPLES for the preview; the real ones will come
-// from the database, and only notes you have approved are shown.
+// Notes live in Supabase. Visitors can only add a note (always unapproved) and
+// read approved ones; Yiting approves notes in the Supabase Table Editor.
+// The publishable key is meant to be public; never put a secret/service key here.
 // ---------------------------------------------------------------------------
-const APPROVED = [
-  "Sample note: loved the supermarket chapter.",
-  "Sample: the doodles are so cute",
-  "Sample note from a classmate: see you in studio!",
-  "Sample: which store has the best dumplings?",
-  "Sample: great work on Port Richmond",
-  "Sample: hi :)",
-];
+const NOTES_URL = "https://ihiqhnnxehhveatdrims.supabase.co/rest/v1/notes";
+const NOTES_KEY = "sb_publishable_sFsH4tueXQ_9L4GtrUVUKA_7117zqFT";
 
 const board = document.getElementById("board");
 const bubbles = [];
@@ -130,7 +126,12 @@ function makeBubble(text, opts = {}) {
   bubbles.push(b);
   return b;
 }
-APPROVED.forEach((m) => makeBubble(m));
+const empty = document.createElement("p");
+empty.className = "empty"; empty.textContent = "No notes yet. Be the first.";
+fetch(NOTES_URL + "?select=body&order=created_at.desc&limit=40", { headers: { apikey: NOTES_KEY } })
+  .then((r) => (r.ok ? r.json() : []))
+  .then((rows) => { rows.forEach((r) => makeBubble(r.body)); if (!rows.length) board.appendChild(empty); })
+  .catch(() => board.appendChild(empty));
 
 // Slow upward drift with a gentle sway; a bubble leaving the top comes back in from the bottom.
 function frame(now) {
@@ -166,7 +167,12 @@ form.addEventListener("submit", (e) => {
   // The new bubble rises from the composer. It lives only on this screen until the note is approved.
   const r = form.getBoundingClientRect(), br = board.getBoundingClientRect();
   makeBubble(text, { mine: true, x: Math.min(Math.max(20, r.left - br.left + r.width / 2 - 60), board.clientWidth - 160), y: r.top - br.top - 40 });
-  // TODO: send `text` to the database as a pending note (connected later).
+  empty.remove();
+  // Saved as a pending note; it only reappears on the board after it is approved.
+  fetch(NOTES_URL, { method: "POST", headers: { apikey: NOTES_KEY, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ body: text }) })
+    .then((r) => { if (!r.ok) throw 0; })
+    .catch(() => { toast.textContent = "Couldn't send that one. Please try again."; });
+  toast.textContent = "Sent. It will stay on the board once I've read it.";
   msg.value = ""; msg.style.height = "auto"; send.disabled = true; count.textContent = "";
   toast.classList.add("on"); clearTimeout(form._t); form._t = setTimeout(() => toast.classList.remove("on"), 3600);
 });
