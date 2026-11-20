@@ -12,7 +12,8 @@
   [data-site-header] { position: fixed; top: 0; left: 0; right: 0; background: var(--bg); }
   .ch { min-height: 100vh; min-height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always;
         display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 0 48px; align-items: center; padding: 80px var(--pad) 64px; }
-  .appendix { scroll-snap-align: start; }
+  .ch.has-foot { position: relative; }
+  .ch.has-foot [data-site-footer] { position: absolute; left: 0; right: 0; bottom: 0; }
   .k { font-size: 14px; color: var(--muted); margin-bottom: 22px; }
   .big { font-size: clamp(34px, 5.4vw, 80px); font-weight: 500; letter-spacing: -.04em; line-height: 1.02; }
   .big .ln { display: block; overflow: hidden; padding-bottom: .06em; }
@@ -51,30 +52,6 @@
   .ch.in .mouth1 { animation: hide 0s 1.8s forwards; } .ch.in .mouth2 { animation: show 0s 1.8s forwards; }
   @keyframes hide { to { opacity: 0; } } @keyframes show { to { opacity: 1; } }
 
-
-  /* ---- Appendix: after the last chapter the page scrolls freely ---- */
-  .appendix { padding: 96px var(--pad) 40px; border-top: 1px solid var(--line); }
-  .appendix .intro-line { font-size: 15px; color: var(--muted); margin-bottom: 64px; }
-  .apx { display: grid; grid-template-columns: minmax(130px, 2fr) minmax(0, 9fr); gap: 0 32px; padding: 0 0 88px; }
-  .apx h2 { font-size: 15px; font-weight: 500; color: var(--muted); padding-top: 4px; }
-  .apx .lead { font-size: 22px; line-height: 1.4; letter-spacing: -.01em; max-width: 30em; margin-bottom: 28px; }
-  .wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 18px; }
-  .wall figure { margin: 0; }
-  .wall .ph { aspect-ratio: 1; border: 1px dashed #cfcac0; border-radius: 4px; background: var(--paper); display: grid; place-items: center; color: var(--muted); font-size: 12px; }
-  .wall figcaption { font-size: 14px; margin-top: 8px; }
-  .shop { max-width: 560px; font: 14px/1.6 ui-monospace, "Cascadia Mono", Consolas, monospace; }
-  .shop .row { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; }
-  .shop .row .dots { flex: 1; border-bottom: 1px dotted #b9b6ae; transform: translateY(-4px); }
-  .shop .muted-row { color: #b9b6ae; }
-  .teaser { display: block; max-width: 560px; padding: 22px 24px; border: 1px solid var(--line); border-radius: 6px; transition: border-color .2s; }
-  .teaser:hover { border-color: var(--ink); }
-  .teaser .k2 { font-size: 13px; color: var(--muted); }
-  .teaser b { display: block; font-size: 19px; font-weight: 500; margin: 6px 0 4px; }
-  .hello { display: block; font-size: clamp(48px, 9vw, 140px); font-weight: 500; letter-spacing: -.05em; line-height: .95; padding: 40px 0 8px; }
-  .hello:hover .arr { transform: translateX(14px); }
-  .hello .arr { display: inline-block; transition: transform .3s; }
-  .mail { font-size: 16px; text-decoration: underline; text-underline-offset: 4px; }
-  @media (max-width: 800px) { .apx { grid-template-columns: 1fr; gap: 14px; } }
 
   .pager { position: fixed; right: var(--pad); bottom: 22px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; z-index: 5; }
   @media (max-width: 800px) {
@@ -262,25 +239,6 @@
     </g></svg>
   </section>
 
-<section class="appendix" id="appendix">
-  <p class="intro-line">That's the manual. The rest is the appendix: scroll as you like.</p>
-
-  <div class="apx">
-    <h2>Things I've made</h2>
-    <div><div class="wall"><figure><div class="ph">Photo coming</div><figcaption>Crochet bag</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Wooden folding chair</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Press-on nails</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Ceramics</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Jigsaws</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>Lego</figcaption></figure><figure><div class="ph">Photo coming</div><figcaption>My home's furniture layout</figcaption></figure></div></div>
-  </div>
-
-  <div class="apx">
-    <h2>Where I buy what</h2>
-    <div><div class="shop"><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div><div class="row muted-row"><span>Item</span><span class="dots"></span><span>Store</span></div></div></div>
-  </div>
-
-  <div class="apx">
-    <h2>Lately</h2>
-    <div><a class="teaser" href="thoughts.html"><span class="k2">From Thoughts</span><b>Notes, sketches and small experiments</b><span class="k2">Coming soon</span></a></div>
-  </div>
-
-</section>
 </main>
 <div class="pager" id="pager" aria-hidden="true"></div>
 <footer data-site-footer></footer>
@@ -307,15 +265,11 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
   setInterval(() => { s = (s % 4) + 1; noise.setAttribute("seed", s); noise2.setAttribute("seed", s); }, 130);
 }
 
-// Snap one chapter at a time only inside the manual; once the appendix comes up, scrolling is free.
-const appendix = document.getElementById("appendix");
-function snapMode() {
-  const free = appendix.getBoundingClientRect().top < innerHeight * 0.5;
-  document.documentElement.style.scrollSnapType = free ? "none" : "";
-  pager.style.opacity = free ? 0 : 1;
-}
-addEventListener("scroll", snapMode, { passive: true });
-snapMode();
+
+
+// The footer sits at the bottom of the last chapter's screen, so it is reachable with snapping on.
+const lastCh = chapters[chapters.length - 1], foot = document.querySelector("[data-site-footer]");
+lastCh.classList.add("has-foot"); lastCh.appendChild(foot);
 </script>
 </body>
 </html>
