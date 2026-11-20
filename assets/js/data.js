@@ -30,6 +30,9 @@ window.CATS = { planning: "Planning", architecture: "Architecture", research: "R
 //   draft    true = hidden everywhere on the site (work in progress)
 //   placeholder  true = stand-in project, remove before real launch
 window.PROJECTS = [
+  // ---- real projects (merged from work/<slug>/entry.js) ----
+  { slug: "elba", title: "The Divided Utopia: Double Lives on the Island", cat: "architecture", date: "2023-12", kind: "Speculative design, storytelling", role: "Team of three; redrew most drawings", blurb: "A speculative Rio Marina, on Elba, where residents rent their homes to tourists and live in hidden extensions behind false facades. The page is told twice: once as the postcard, once from behind it.", ink: "#b8322a", cover: "work/elba/cover.jpg", image: "work/elba/four-types-axon.jpg" },
+  // ---- placeholders ----
   { slug: "project-01", title: "Project One",   cat: "planning",     date: "2026-05", kind: "Neighborhood plan", role: "Role placeholder",             blurb: "Placeholder introduction. Two or three short lines saying what the project is and what you did.", ink: "#2a3aa8", cover: null, placeholder: true },
   { slug: "project-02", title: "Project Two",   cat: "architecture", date: "2024-04", kind: "Housing design",    role: "Individual project",           blurb: "Placeholder introduction. Two or three short lines saying what the project is and what you did.", ink: "#2f7d4f", cover: null, placeholder: true },
   { slug: "project-03", title: "Project Three", cat: "research",     date: "2026-04", kind: "GIS analysis",      role: "Research, writing",            blurb: "Placeholder introduction. Two or three short lines saying what the project is and what you did.", ink: "#c5262e", cover: null, placeholder: true },

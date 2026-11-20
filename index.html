@@ -25,10 +25,14 @@
   .note .k { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
   .note h3 { font-size: 24px; font-weight: 500; letter-spacing: -.03em; line-height: 1.05; margin: 5px 0 8px; }
   .note .b { font-size: 13px; line-height: 1.45; color: var(--muted); }
+  /* A soft white pad under the text, so it stays readable when it lands over the cards below. */
+  .note > * { position: relative; }
+  .note::before { content: ""; position: absolute; inset: -14px -16px; background: var(--bg); border-radius: 14px; box-shadow: 0 0 22px 14px var(--bg); opacity: 0; transition: opacity .25s; }
+  .note.on::before { opacity: .94; }
   .after { padding: 80px var(--pad) 120px; border-top: 1px solid var(--ink); background: var(--bg); position: relative; z-index: 2; }
   .after a { display: flex; justify-content: space-between; font-size: clamp(28px, 5vw, 64px); font-weight: 500; letter-spacing: -.04em; padding: 14px 0; border-bottom: 1px solid var(--ink); transition: padding .3s var(--ease); }
   .after a:hover { padding-left: 16px; }
-  @media (max-width: 720px) { .hello p { display: none; } }
+  @media (max-width: 720px) { .hello p { display: none; } .card, .hit { --h: clamp(92px, 28vw, 140px); } .note { width: 200px; } }
 </style>
 </head>
 <body data-page="home">
@@ -107,7 +111,7 @@ function frame(now) {
     if (k === shownFor) {
       const top = y - size * 0.5 - rise, nw = note.offsetWidth, room = x - size / 2 - 22 - nw, beside = room > 14;
       note.classList.toggle("right", beside);
-      const nx = beside ? room : Math.max(14, x - size / 2), ny = beside ? top + 4 : top - note.offsetHeight - 14;
+      const nx = Math.min(W - nw - 14, beside ? room : Math.max(14, x - size / 2)), ny = beside ? top + 4 : top - note.offsetHeight - 14;
       note.style.transform = `translate(${nx}px, ${ny}px)`;
       const h = hello.getBoundingClientRect(), s = scene.getBoundingClientRect();
       hello.classList.toggle("dim", note.classList.contains("on") && nx < h.right - s.left + 10 && ny < h.bottom - s.top + 10);
