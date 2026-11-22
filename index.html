@@ -225,7 +225,9 @@ for (let k = 0; k < M; k++) {
 const landed = new Set(covs.map((c) => c.k));
 for (let k = 0; k < M; k++) {
   const P = LIST[k % N];
-  scene.insertAdjacentHTML("beforeend", `<div class="card">${coverHTML(P)}</div><a class="hit" href="${projectUrl(P)}" aria-label="${P.title}"></a>`);
+  scene.insertAdjacentHTML("beforeend", soon(P)
+    ? `<div class="card">${coverHTML(P)}</div><div class="hit soon" tabindex="0" aria-label="${SOON.title}"></div>`
+    : `<div class="card">${coverHTML(P)}</div><a class="hit" href="${projectUrl(P)}" aria-label="${P.title}"></a>`);
 }
 // The pointer is tested against `hits`, which stay in the row, so a card that lifts away never loses its own hover.
 const cards = [...scene.querySelectorAll(".card")], hits = [...scene.querySelectorAll(".hit")];
@@ -293,7 +295,7 @@ function showNote(k) {
   if (k < 0) { noteT = setTimeout(() => { shownFor = -1; hello.classList.remove("dim"); }, 200); return; }
   noteT = setTimeout(() => {
     const P = LIST[k % N];
-    note.innerHTML = `<p class="k">${CATS[P.cat]} · ${year(P)}</p><h3>${P.title}</h3><p class="b">${P.blurb}</p>`;
+    note.innerHTML = soon(P) ? `<h3>${SOON.title}</h3><p class="b">${SOON.blurb}</p>` : `<p class="k">${CATS[P.cat]} · ${year(P)}</p><h3>${P.title}</h3><p class="b">${P.blurb}</p>`;
     shownFor = k;
     requestAnimationFrame(() => requestAnimationFrame(() => note.classList.add("on")));
   }, shownFor < 0 ? 0 : 110);

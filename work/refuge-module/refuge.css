@@ -1,0 +1,87 @@
+/* Refuge Module page only. */
+.p figure.labelled svg { display: block; width: 100%; height: auto; }
+.labelled .lbl path { fill: none; stroke: #b8322a; stroke-width: 2.5; }
+.labelled .lbl text { font: 40px "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif; fill: #121212; }
+.steps { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 0 0 56px; }
+.steps figure { margin: 0 !important; }
+.steps img { display: block; width: 100%; }
+.joint { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: end; }
+.joint img { height: 380px; width: 100% !important; object-fit: contain; object-position: center bottom; }
+.side { display: grid; grid-template-columns: 1.5fr 1fr; gap: 48px; align-items: center; margin: 0 0 56px; }
+.side .p-text { margin: 0; max-width: none; position: sticky; top: 120px; align-self: start; }
+.side figure { margin: 0 !important; }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 720px) {
+  .side, .three { grid-template-columns: 1fr; }
+  .labelled .lbl text { font-size: 48px; }
+}
+.story { display: grid; grid-template-columns: 1.25fr 1fr; gap: 56px; margin: 0 0 80px; }
+.story-img { position: sticky; top: 90px; align-self: start; margin: 0 !important; }
+.story-img img { display: block; width: 100%; }
+
+
+.story-steps .p-text { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; margin: 0; max-width: none; }
+.vigs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: end; margin: 0 0 80px; }
+.vigs figure { margin: 0 !important; }
+.vigs img { display: block; width: 100%; height: 260px; object-fit: contain; object-position: bottom; }
+.stops { margin: 16px 0 0; padding-left: 1.6em; columns: 2; color: #5a6970; }
+.stops li { margin: 0 0 4px; }
+@media (max-width: 720px) {
+  .story, .vigs { grid-template-columns: 1fr; }
+  .story-img { position: relative; top: 0; }
+  .story-steps .p-text { min-height: 0; margin: 0 0 24px; }
+}
+/* story: three stacked bands, the active one in full, the others faded back */
+.story-img .band { position: static; display: block; width: 100%; opacity: .32; filter: grayscale(1); transition: opacity .8s ease, filter .8s ease; }
+.story-img .band.on { opacity: 1; filter: none; }
+/* route: sticky map, the boat travels as you scroll */
+.route { height: 260vh; margin: 0 0 80px; }
+.route-stick { position: sticky; top: 70px; height: calc(100vh - 90px); display: flex; flex-direction: column; justify-content: center; }
+.route-head { margin: 0 0 8px; max-width: 640px; }
+.route-svg { width: 100%; height: auto; max-height: 72vh; overflow: visible; }
+.route-svg .sea { fill: #eef1f2; stroke: none; }
+.route-svg .river-base { fill: none; stroke: #c9d1d4; stroke-width: 2; }
+.route-svg .river-run { fill: none; stroke: #aa2524; stroke-width: 2.5; }
+.route-svg .city circle { fill: #fff; stroke: #5a6970; stroke-width: 1.2; transition: fill .4s, stroke .4s, r .4s; }
+.route-svg .city text { font: 13px "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif; fill: #a3adb1; transition: fill .4s; }
+.route-svg .city.lit circle { fill: #aa2524; stroke: #aa2524; r: 6; }
+.route-svg .city.lit text { fill: #121212; }
+.route-svg .boat rect { fill: #fff; stroke: #aa2524; stroke-width: 1.5; }
+.route-svg .boat path { stroke: #aa2524; stroke-width: 1; }
+@media (max-width: 720px) { .route { height: auto; } .route-stick { position: static; height: auto; } }
+/* story v2: layers build up one by one */
+.story-img { position: sticky; }
+.story-img .layer { display: block; width: 100%; opacity: 0; transform: translateY(18px); transition: opacity .9s ease, transform .9s ease; }
+.story-img .layer + .layer { position: absolute; top: 0; left: 0; }
+.story-img .layer.on { opacity: 1; transform: none; }
+/* route v2 */
+.route-stick { position: sticky; }
+.route-svg .lbl-sea text { font: italic 13px "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif; fill: #8f9ba0; }
+.route-svg .lbl-country text { font: 11px "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif; letter-spacing: .25em; fill: #c3cacd; }
+.route-svg .lbl-river text { font: italic 12px "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif; fill: #7f9bb0; }
+.route-svg .scale path { stroke: #5a6970; stroke-width: 1.5; }
+.route-svg .scale text { font: 11px "Helvetica Neue", "Segoe UI", system-ui, Arial, sans-serif; fill: #5a6970; }
+.route-svg .boat rect { fill: #fff; stroke: #aa2524; stroke-width: 1.3; }
+.stop-card { display: grid; grid-template-columns: 64px 1fr; gap: 2px 16px; align-items: baseline; border-top: 1px solid #5a6970; padding-top: 10px; margin-top: 4px; max-width: 520px; color: #5a6970; }
+.stop-card .sc-n, .stop-card .sc-km { font: 13px "Courier New", ui-monospace, monospace; }
+.stop-card .sc-city { font-size: 22px; color: #121212; font-weight: 500; }
+.stop-card .sc-meta { grid-column: 2; font-size: 14px; }
+.route-svg .bm-coast path { fill: none; stroke: #b9c3c7; stroke-width: .8; }
+.route-svg .bm-border path { fill: none; stroke: #d6dcde; stroke-width: .7; stroke-dasharray: 3 3; }
+.route-svg .bm-river path { fill: none; stroke: #c9d6dd; stroke-width: .7; }
+
+.stop-card .sc-bars { grid-column: 1 / 3; display: grid; grid-template-columns: 120px 1fr; gap: 6px 12px; margin: 10px 0 0; font-size: 13px; max-width: 420px; }
+.stop-card .sc-bars dt { color: #5a6970; }
+.stop-card .sc-bars dd { margin: 0; align-self: center; height: 8px; background: #f1dede; position: relative; }
+.stop-card .sc-bars dd:not(.sc-km)::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(20% - 3px), #fff calc(20% - 3px) 20%); }
+.stop-card .sc-bars dd i { position: absolute; inset: 0 auto 0 0; width: 0; background: #aa2524; transition: width .5s ease; }
+.stop-card .sc-bars dd.sc-km { height: auto; background: none; font: 13px "Courier New", ui-monospace, monospace; color: #121212; }
+
+.loop { position: relative; margin: 0 0 80px; }
+.loop img { display: block; width: 100%; }
+.loop-mid { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -44%); width: 34%; margin: 0; text-align: center; }
+@media (max-width: 720px) { .loop-mid { position: static; transform: none; width: auto; text-align: left; } }
+@media (max-width: 720px) { .story-img .layer { opacity: 1; transform: none; } }
+.route-svg .water-band path { fill: none; stroke: #dce9f0; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+.route-svg .river-base { stroke: #b7cfdc; stroke-width: 1.5; }
+.route-svg .spur { fill: none; stroke: #aa2524; stroke-width: 1; stroke-dasharray: 3 3; }

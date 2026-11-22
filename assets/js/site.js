@@ -13,6 +13,9 @@ const prettyDate = (p) => `${MONTHS[+p.date.slice(5, 7) - 1]}.${year(p)}`;
 const projectUrl = (p) => url(`work/${p.slug}/`);
 const live = () => PROJECTS.filter((p) => !p.draft);               // everything the site may show
 const newestFirst = (list) => [...list].sort((a, b) => b.date.localeCompare(a.date));
+// Placeholder projects are shown as "Coming soon": no title, details or link.
+const SOON = { title: "Coming soon", blurb: "A new project is on its way." };
+const soon = (p) => !!p.placeholder;
 
 // ---- header and footer ------------------------------------------------------
 const NAV = [["work", "Work", "work.html"], ["about", "About", "about.html"], ["resume", "Resume", "resume.html"], ["thoughts", "Thoughts", "thoughts.html"], ["contact", "Contact", "contact.html"]];

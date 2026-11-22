@@ -39,6 +39,9 @@
   body.as-grid .img { display: grid; }
   body.as-grid .txt, body.as-grid .stage { display: none; }
   .piece { display: block; }
+  /* Coming-soon slots: not links, so no underline and no pointer. */
+  .item.soon h3 { text-decoration: none; color: var(--muted); font-weight: 500; }
+  .item.soon, .piece.soon { cursor: default; }
   .piece .pic { position: relative; overflow: hidden; border-radius: 4px; }
   .piece .pic > div { position: absolute; inset: 0; transition: opacity .5s; }
   .piece .pic .col { opacity: 0; }
@@ -76,13 +79,20 @@
 <script src="assets/js/data.js"></script>
 <script src="assets/js/site.js"></script>
 <script>
-const LIST = newestFirst(live());
+const LIST = [...newestFirst(live().filter((p) => !soon(p))), ...live().filter(soon)];   // real projects first, then the coming-soon slots
 // Grid: each piece gets a column span, a shape and a vertical nudge, so the page reads like a spread rather than a table.
 const LAYOUT = [["1 / span 7", "16/10", 0], ["9 / span 4", "4/5", 90], ["2 / span 4", "1/1", 0], ["7 / span 6", "16/10", 60], ["1 / span 5", "4/5", 0], ["7 / span 5", "4/3", 130], ["3 / span 8", "16/9", 0], ["1 / span 4", "1/1", 0], ["6 / span 7", "16/10", 80], ["4 / span 5", "4/5", 0]];
 
 const txt = document.getElementById("txt"), img = document.getElementById("img"), peek = document.getElementById("peek"), big = document.getElementById("big");
 LIST.forEach((P, n) => {
-  const kind = `${CATS[P.cat]} · ${P.kind}`, L = LAYOUT[n % LAYOUT.length];
+  const L = LAYOUT[n % LAYOUT.length];
+  if (soon(P)) {
+    txt.insertAdjacentHTML("beforeend", `<div class="item soon" data-cat="soon" tabindex="0"><h3>${SOON.title}</h3><p></p><p></p><p class="mono"></p></div>`);
+    peek.insertAdjacentHTML("beforeend", `<div>${colourHTML(P)}</div>`);
+    img.insertAdjacentHTML("beforeend", `<div class="piece soon" data-cat="soon" style="grid-column:${L[0]};margin-top:${L[2]}px"><div class="pic" style="aspect-ratio:${L[1]}"><div>${coverHTML(P)}</div><div class="col">${colourHTML(P)}</div></div><div class="cap"><h3>${SOON.title}</h3></div></div>`);
+    return;
+  }
+  const kind = `${CATS[P.cat]} · ${P.kind}`;
   txt.insertAdjacentHTML("beforeend", `<a class="item" data-cat="${P.cat}" href="${projectUrl(P)}" style="--ink-c:${P.ink}"><h3>${P.title}</h3><p>${kind}</p><p>${P.role}</p><p class="mono">${prettyDate(P)}</p></a>`);
   peek.insertAdjacentHTML("beforeend", `<div>${colourHTML(P)}</div>`);
   img.insertAdjacentHTML("beforeend", `<a class="piece" data-cat="${P.cat}" href="${projectUrl(P)}" style="grid-column:${L[0]};margin-top:${L[2]}px"><div class="pic" style="aspect-ratio:${L[1]}"><div>${coverHTML(P)}</div><div class="col">${colourHTML(P)}</div></div><div class="cap"><h3>${P.title}</h3><p>${kind}</p><p class="mono">${prettyDate(P)}</p></div></a>`);
@@ -97,7 +107,7 @@ items.forEach((el, n) => {
     txt.classList.add("hovering");
     items.forEach((x) => x.classList.toggle("hot", x === el));
     peeks.forEach((x, m) => x.classList.toggle("on", m === n));
-    big.innerHTML = `<span>${CATS[P.cat]} · ${year(P)}</span><b>${P.title}</b><p>${P.blurb}</p>`;
+    big.innerHTML = soon(P) ? `<b>${SOON.title}</b><p>${SOON.blurb}</p>` : `<span>${CATS[P.cat]} · ${year(P)}</span><b>${P.title}</b><p>${P.blurb}</p>`;
     peek.classList.add("on"); big.classList.add("on");
   };
   el.addEventListener("mouseenter", show);
@@ -110,7 +120,7 @@ function apply() {
   const f = currentFilter();
   let shown = 0;
   [...items, ...img.children].forEach((el) => el.classList.toggle("gone", f !== "all" && el.dataset.cat !== f));
-  items.forEach((el) => !el.classList.contains("gone") && shown++);
+  items.forEach((el) => !el.classList.contains("gone") && !el.classList.contains("soon") && shown++);
   document.getElementById("count").textContent = `${shown} project${shown === 1 ? "" : "s"}`;
 }
 buildFilters(document.getElementById("filters"), apply);
