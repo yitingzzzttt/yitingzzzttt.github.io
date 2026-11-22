@@ -110,8 +110,16 @@ renderChrome();
   set("[data-p-title]", P.title);
   set("[data-p-facts]", `<dt>Type</dt><dd>${P.kind}</dd><dt>Role</dt><dd>${P.role}</dd>` + (document.querySelector("[data-p-facts]")?.innerHTML || ""));
   // Next project, in the same order as the Work page.
-  const list = newestFirst(live()), next = list[(list.indexOf(P) + 1) % list.length];
+  const list = newestFirst(live().filter((p) => !soon(p))), next = list[(list.indexOf(P) + 1) % list.length];
   document.querySelectorAll("[data-p-next]").forEach((a) => { a.href = projectUrl(next); a.innerHTML = `<span>Next project</span><b>${next.title} →</b>`; });
+  // Reading progress in the header.
+  const head = document.querySelector(".top");
+  if (head) {
+    head.insertAdjacentHTML("beforeend", `<div class="progress" aria-hidden="true"><i></i></div>`);
+    const bar = head.querySelector(".progress i");
+    const update = () => { const max = document.documentElement.scrollHeight - innerHeight; bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`; };
+    addEventListener("scroll", update, { passive: true }); addEventListener("resize", update); update();
+  }
   // Close: back to wherever the visitor came from on this site, otherwise to Work.
   document.querySelectorAll("[data-p-close]").forEach((a) => {
     a.href = url("work.html");

@@ -126,6 +126,25 @@ function apply() {
 buildFilters(document.getElementById("filters"), apply);
 apply();
 
+// Shared-image transition: the clicked picture grows into the project page's big image,
+// and on the way back the big image shrinks into the same picture here.
+const picFor = (n) => (document.body.classList.contains("as-grid") ? img.children[n].querySelector(".pic") : peek);
+const slugAt = (href) => LIST.findIndex((P) => !soon(P) && new URL(projectUrl(P)).pathname === new URL(href, location.href).pathname);
+let named = null;
+const nameIt = (el) => { if (named) named.style.viewTransitionName = ""; named = el; if (el) el.style.viewTransitionName = "hero"; };
+addEventListener("pageswap", (e) => {
+  const to = e.activation && e.activation.entry && e.activation.entry.url, n = to ? slugAt(to) : -1;
+  nameIt(n >= 0 ? picFor(n) : null);
+});
+addEventListener("pagereveal", (e) => {
+  if (!e.viewTransition) return;
+  const from = navigation.activation && navigation.activation.from && navigation.activation.from.url, n = from ? slugAt(from) : -1;
+  if (n < 0) return;
+  if (!document.body.classList.contains("as-grid")) { peeks.forEach((x, m) => x.classList.toggle("on", m === n)); peek.classList.add("on"); }
+  nameIt(picFor(n));
+  e.viewTransition.finished.finally(() => { nameIt(null); calm(); });
+});
+
 // List / Grid, remembered in the URL too: work.html?view=grid
 const view = document.getElementById("view");
 function setView(v) {
