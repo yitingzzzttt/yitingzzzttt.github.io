@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Port Richmond Green Network — Yiting Zhong</title>
+<meta name="description" content="A green network for Port Richmond, Philadelphia: reusing an inactive rail line, I-95 underpass voids and an abandoned pier as connected public green space.">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<style>
+  /* page-only styles for Port Richmond */
+  .pr-part { margin: 7rem 0 2.5rem; }
+  .pr-part h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 500; letter-spacing: -.02em; margin: 0; }
+  .pr-part p { max-width: 38rem; margin: .8rem 0 0; color: #555; }
+  /* rhythm: medium (side), large (full), small (trio) */
+  .n { font-family: ui-monospace, Menlo, monospace; font-size: .85rem; color: #888; }
+  .pr-row img, .pr-card img { width: 100%; display: block; }
+  .pr-row figure, .pr-card figure { margin: 0; }
+  .pr-row h3, .pr-card h3 { font-size: 1.35rem; font-weight: 500; margin: .3rem 0 .8rem; }
+  .pr-row p, .pr-card p { margin: 0 0 .8rem; line-height: 1.6; }
+  .pr-row.side { display: grid; grid-template-columns: 7fr 4fr; gap: 3rem; align-items: start; margin: 4rem 0; }
+  .pr-row.side.r { grid-template-columns: 4fr 7fr; }
+  .pr-row.side.r > figure { order: 2; }
+  .pr-row.full { margin: 6rem 0; }
+  .pr-row.full figure { margin: 0 calc(50% - 50vw + 2rem) 1.6rem; }
+  .pr-row.full img { max-height: 85vh; object-fit: contain; }
+  .pr-row.full > div { display: grid; grid-template-columns: 2.5rem 16rem 1fr; gap: 0 1.5rem; align-items: baseline; }
+  .pr-row.full > div .n { grid-column: 1; grid-row: 1; }
+  .pr-row.full h3 { grid-column: 2; grid-row: 1 / span 3; margin: 0; }
+  .pr-row.full p { grid-column: 3; max-width: 40rem; }
+  .pr-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  .pr-card figure { margin-bottom: 1rem; }
+  .pr-card p { font-size: .95rem; }
+  .pr-obj figure.big { margin-left: -5rem; }
+  /* paired images share one shape */
+  .pr-obj .p-pair img { aspect-ratio: 4 / 3; object-fit: cover; }
+  .pr-goal { font-size: clamp(1.4rem, 3vw, 2.2rem); line-height: 1.3; letter-spacing: -.01em; max-width: 50rem; margin: 6rem 0; }
+  .pr-obj { display: grid; grid-template-columns: 4rem 1fr; gap: 1rem; border-top: 1px solid #000; padding: 1.6rem 0; }
+  .pr-obj .n { font-family: ui-monospace, Menlo, monospace; font-size: .85rem; }
+  .pr-obj h3 { font-size: 1.35rem; font-weight: 500; margin: 0 0 .6rem; }
+  .pr-obj p { margin: 0 0 1rem; max-width: 42rem; line-height: 1.6; }
+  .pr-obj ol { margin: 0; padding: 0; list-style: none; }
+  .pr-obj li { display: flex; justify-content: space-between; gap: 2rem; padding: .45rem 0; border-top: 1px solid #e5e5e5; }
+  .pr-obj li span:last-child { font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: #888; white-space: nowrap; }
+  .pr-obj figure { margin: 1.4rem 0 0; }
+  .pr-obj img { width: 100%; display: block; }
+  .pr-chart { margin: 1.6rem 0 0; max-width: 24rem; }
+  .pr-chart svg { width: 100%; display: block; }
+  .pr-chart figcaption { font-size: .75rem; color: #888; margin-top: .4rem; line-height: 1.4; }
+  .pr-loc { max-width: 24rem; margin: 2rem 0 0; }
+  .pr-loc img { width: 100%; display: block; }
+  .pr-note { color: #555; font-size: .95rem; }
+  .pr-ba { --x: 50%; position: relative; max-width: 34rem; margin: 1.2rem 0 0; user-select: none; }
+  .pr-ba img { width: 100%; display: block; }
+  .pr-ba-after { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--x)); }
+  .pr-ba-line { position: absolute; top: 0; bottom: 0; left: var(--x); width: 2px; margin-left: -1px; background: #fff; pointer-events: none; }
+  .pr-ba-line::after { content: ""; position: absolute; top: 50%; left: 50%; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  .pr-ba input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+  .pr-ba-tag { position: absolute; bottom: .6rem; font-size: .75rem; background: rgba(255,255,255,.85); padding: .15rem .45rem; pointer-events: none; }
+  .pr-ba-tag.l { left: .6rem; } .pr-ba-tag.r { right: .6rem; }
+  @media (max-width: 760px) {
+    .pr-row.side, .pr-trio { grid-template-columns: 1fr; gap: 1.2rem; }
+    .pr-row.side.r > figure { order: 0; }
+    .pr-row.full figure { margin: 0 0 1.2rem; }
+    .pr-row.full > div { grid-template-columns: 1fr; }
+    .pr-row.full > div p, .pr-row.full h3, .pr-row.full > div .n { grid-column: 1; grid-row: auto; }
+    .pr-row.full h3 { margin: .3rem 0 .8rem; }
+    .pr-obj figure.big { margin-left: 0; }
+    .pr-obj { grid-template-columns: 1fr; }
+    .pr-obj li { flex-direction: column; gap: .2rem; }
+  }
+</style>
+</head>
+<body data-page="work" data-project="port-richmond">
+<header data-site-header></header>
+<a class="close" data-p-close aria-label="Close">✕</a>
+
+<div class="p-hero" data-p-hero></div>
+
+<article class="p">
+  <p class="p-meta" data-p-meta></p>
+  <h1 data-p-title></h1>
+
+  <div class="p-intro">
+    <dl data-p-facts>
+      <dt>Studio</dt><dd>Penn MCP Studio, Spring 2026, led by Katie Levesque, for a newly formed Port Richmond CDC</dd>
+      <dt>My part</dt><dd>Wrote the chapter and made all of its maps, diagrams and renderings</dd>
+      <dt>Data</dt><dd>Site observation and photos, Census ACS, OpenDataPhilly</dd>
+      <dt>Tools</dt><dd>ArcGIS Pro, Excel, Illustrator, Photoshop, InDesign</dd>
+    </dl>
+    <div class="lede">
+      <p>Port Richmond is an industrial neighborhood on the Delaware River in Philadelphia. Its environment is shaped by neighborhood parks, freight rail and I-95, and an industrial waterfront. A long history of industrial development favored paved land and freight over green space, so the neighborhood's open space is tied to its industrial landscape.</p>
+      <figure class="pr-loc"><img src="locator.jpg" alt="Map of Philadelphia with Port Richmond highlighted on the Delaware River"><figcaption>Port Richmond in Philadelphia. Locator map by the studio team.</figcaption></figure>
+    </div>
+  </div>
+
+  <figure class="wide"><img src="site-map.jpg" alt="Map of Port Richmond showing residential and industrial land, green space, railroads and I-95"><figcaption>Port Richmond: residential blocks, industrial land, rail lines and I-95 between the neighborhood and the river.</figcaption></figure>
+
+  <!-- ISSUES -->
+  <div class="pr-part">
+    <h2>Issues</h2>
+    <p>Looking past individual parks to the environmental fabric of the whole neighborhood.</p>
+  </div>
+
+  <div class="pr-row side">
+    <figure><img src="air-pollution.jpg" alt="Map of air emission sources across Port Richmond"></figure>
+    <div>
+      <span class="n">01</span>
+      <h3>Industrial air pollution</h3>
+      <p>Port Richmond sits between I-95, the marine terminals and active industrial land, and emission sources are spread across the neighborhood. Trees could block industrial dust, absorb exhaust and filter noise, but the neighborhood has fewer parks than the Philadelphia average and a very low tree canopy, so residents are exposed directly to heat and pollution.</p>
+      <figure class="pr-chart" aria-label="Tree canopy cover: Philadelphia about 20 percent, Port Richmond 10 percent or less, city goal 30 percent">
+        <svg viewBox="0 0 360 150" role="img">
+          <g font-size="12" fill="currentColor">
+            <text x="0" y="40">Philadelphia</text>
+            <rect x="96" y="28" width="160" height="16" fill="#111"/>
+            <text x="262" y="40">20%</text>
+            <text x="0" y="82">Port Richmond</text>
+            <rect x="96" y="70" width="80" height="16" fill="none" stroke="#111" stroke-dasharray="3 2"/>
+            <text x="182" y="82">10% or less</text>
+            <line x1="336" y1="14" x2="336" y2="104" stroke="#888" stroke-dasharray="2 3"/>
+            <text x="336" y="122" text-anchor="middle" fill="#888">30% goal</text>
+          </g>
+        </svg>
+        <figcaption>Tree canopy cover. Philadelphia: 2018 citywide assessment, cited in the Philly Tree Plan (2023), which sets the 30% goal. Port Richmond: Philadelphia Inquirer analysis (2021).</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="pr-row full">
+    <figure><img src="green-network-map.jpg" alt="Map of Port Richmond's nine parks and recreation spaces, each shown with an aerial photo and its type"></figure>
+    <div>
+      <span class="n">02</span>
+      <h3>The wrong kind of green space</h3>
+      <p>The neighborhood has nine green spaces, but they offer 5 active courts, 6 playgrounds and only 4 passive green spaces. Adults and middle-aged and older residents make up about 70% of the population, and they need places to sit, walk and rest.</p>
+      <p>The issue is not simply a lack of green space, but a lack of passive green space for everyday public life.</p>
+    </div>
+  </div>
+
+  <div class="pr-row side r">
+    <figure><img src="cso.jpg" alt="Diagram of impervious surfaces, runoff and combined sewer overflow, with outfalls on the Delaware"></figure>
+    <div>
+      <span class="n">03</span>
+      <h3>Combined sewer overflow</h3>
+      <p>Paved industrial sites, storage yards, wide roads and parking lots keep rain from soaking in. Polluted runoff flows into a combined sewer that also carries wastewater, and in heavy rain it overflows, sending untreated discharge into the river.</p>
+    </div>
+  </div>
+
+  <!-- OPPORTUNITIES -->
+  <div class="pr-part">
+    <h2>Opportunities</h2>
+    <p>Leftover infrastructure that could become public green space.</p>
+  </div>
+
+  
+  <div class="pr-row side">
+    <figure><img src="rail.jpg" alt="Map of the inactive railway near the Aramingo commercial corridor, with photos of its current condition"></figure>
+    <div>
+      <span class="n">01</span>
+      <h3>Inactive railway</h3>
+      <p>A former industrial rail line runs tight against buildings and through parking lots in the commercial district, buried in places under trash and debris. It reads as a scar in the urban fabric, but it is also a linear space that already exists and could become a connective public space.</p>
+    </div>
+  </div>
+
+  <div class="pr-row side r">
+    <figure><img src="underpass-map.jpg" alt="Map of two underpass void sites along I-95 with photos of parking and unused space"></figure>
+    <div>
+      <span class="n">02</span>
+      <h3>Underpass of I-95</h3>
+      <p>I-95 separates the homes from the industrial area and the waterfront. The space beneath it falls into three types: the embankment, stacked transit and the void. The voids hold the most potential; today they hold more parking than residents need, or nothing. Through site observation we identified two voids for reuse.</p>
+    </div>
+  </div>
+
+  <div class="pr-row side">
+    <figure><img src="waterfront.jpg" alt="Map of waterfront leading lanes, signs and an extended waterfront site at Pulaski Park"></figure>
+    <div>
+      <span class="n">03</span>
+      <h3>Inactive pier</h3>
+      <p>Pulaski Park is the only public access to the water, and it is small and far from most homes. The abandoned pier next to it could extend the park and become the end of a route that starts inside the neighborhood.</p>
+    </div>
+  </div>
+
+  <!-- GOAL -->
+  <p class="pr-goal">Transform underutilized infrastructure and fragmented open spaces into an accessible green network that improves environmental resilience, expands recreation, and reconnects the community to the waterfront.</p>
+
+  <!-- ACTIONS -->
+  <div class="pr-part" style="margin-top:0">
+    <h2>Actions</h2>
+  </div>
+
+  <div class="pr-obj">
+    <span class="n">01</span>
+    <div>
+      <h3>Reuse the inactive railway as a greenway and walking trail</h3>
+      <ol>
+        <li><span>Establish a safe, continuous pedestrian corridor</span><span>Mid-term</span></li>
+        <li><span>Create passive recreation and resting spaces</span><span>Short to mid-term</span></li>
+        <li><span>Introduce small-scale recreation, programming and local vendors</span><span>Short to mid-term</span></li>
+      </ol>
+      <figure class="big"><img src="rail-render.jpg" alt="Rendering of the former rail line as a gravel walking path with planting, benches, a coffee truck and market stalls along the old tracks"><figcaption>The former rail line as a walking trail, keeping the old tracks.</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="pr-obj">
+    <span class="n">02</span>
+    <div>
+      <h3>Convert underpass voids into recreation and gathering spaces</h3>
+      <ol>
+        <li><span>Identify and prepare voids for public reuse</span><span>Short to mid-term</span></li>
+        <li><span>Install recreation and gathering amenities</span><span>Mid-term</span></li>
+        <li><span>Improve comfort, safety and year-round use</span><span>Short to mid-term</span></li>
+        <li><span>Support community programming and events</span><span>Short-term</span></li>
+      </ol>
+      <figure class="big"><img src="underpass-render.jpg" alt="Rendering of a planted path, skate area and market under the I-95 deck"><figcaption>A proposed public room under I-95.</figcaption></figure>
+    </div>
+  </div>
+
+  <div class="pr-obj">
+    <span class="n">03</span>
+    <div>
+      <h3>Reconnect the neighborhood to the waterfront</h3>
+      <ol>
+        <li><span>Improve walking and cycling links across rail, highway and industrial land</span><span>Mid-term</span></li>
+        <li><span>Expand and activate public waterfront access, including the inactive pier</span><span>Mid to long-term</span></li>
+      </ol>
+      <div class="p-pair">
+        <figure><img src="wayfinding-underpass.jpg" alt="Rendering of a large WATERFRONT sign with an arrow painted on an underpass wall"><figcaption>Underpass wayfinding.</figcaption></figure>
+        <figure><img src="wayfinding-intersection.jpg" alt="Rendering of a waterfront arrow painted on a sidewalk and a sign at an intersection, 0.4 miles to Port Richmond Waterfront Park"><figcaption>Intersection wayfinding toward the waterfront park.</figcaption></figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="pr-obj">
+    <span class="n">04</span>
+    <div>
+      <h3>Improve ecological resilience and environmental health</h3>
+      <ol>
+        <li><span>Green stormwater infrastructure to reduce combined sewer overflow</span><span>Mid to long-term</span></li>
+        <li><span>Planted tree buffers against heat and pollution</span><span>Short to long-term</span></li>
+      </ol>
+      <p class="pr-note">Why a buffer and not a row of street trees: most residential streets here are too narrow. Street trees need wide sidewalks and planting strips that these streets do not have, so the planting goes where there is room, in a buffer at the corner.</p>
+      <figure class="pr-ba" aria-label="Before and after: a residential corner with a planted buffer">
+        <img src="street-before.jpg" alt="A Port Richmond residential street today, with almost no trees">
+        <div class="pr-ba-after"><img src="street-after.jpg" alt="The same corner with a planted tree buffer"></div>
+        <span class="pr-ba-line"></span>
+        <input type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after">
+        <span class="pr-ba-tag l">Today</span><span class="pr-ba-tag r">With a corner buffer</span>
+      </figure>
+      <script>
+        document.querySelectorAll('.pr-ba').forEach(function (ba) {
+          var r = ba.querySelector('input');
+          function set() { ba.style.setProperty('--x', r.value + '%'); }
+          r.addEventListener('input', set); set();
+        });
+      </script>
+    </div>
+  </div>
+</article>
+
+<a class="p-next" data-p-next></a>
+<footer data-site-footer></footer>
+<script src="../../assets/js/data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>
