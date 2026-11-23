@@ -18,7 +18,8 @@ const SOON = { title: "Coming soon", blurb: "A new project is on its way." };
 const soon = (p) => !!p.placeholder;
 
 // ---- header and footer ------------------------------------------------------
-const NAV = [["work", "Work", "work.html"], ["about", "About", "about.html"], ["resume", "Resume", "resume.html"], ["thoughts", "Thoughts", "thoughts.html"], ["contact", "Contact", "contact.html"]];
+// Thoughts is hidden from the navigation until it has content (2026-11-22); add ["thoughts", "Thoughts", "thoughts.html"] back after Resume.
+const NAV = [["work", "Work", "work.html"], ["about", "About", "about.html"], ["resume", "Resume", "resume.html"], ["contact", "Contact", "contact.html"]];
 function renderChrome() {
   const page = document.body.dataset.page;
   document.querySelectorAll("[data-site-header]").forEach((h) => {

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yiting Zhong</title>
 <meta name="description" content="Yiting Zhong — city planning, spatial data and design.">
+<style>@view-transition { navigation: auto; }</style>
 <link rel="stylesheet" href="assets/css/site.css">
 <style>
   .stage { position: sticky; top: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
@@ -58,8 +59,8 @@
   .route path { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: .006 .008; stroke-linecap: round; }
   .hint { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); font-size: 13px; color: var(--muted); transition: opacity .3s; }
   @media (max-width: 720px) { .doo { scale: .7; } .notes span { font-size: 10px; } }
-  @media (prefers-reduced-motion: reduce) { .op-track { display: none; } .doo g, .route { filter: none; } }
-  @media (max-width: 720px) { .hello p { display: none; } .card, .hit { --h: clamp(92px, 28vw, 140px); } .note { width: 200px; } }
+  @media (prefers-reduced-motion: reduce) { .op-track { display: none; } #track { margin-top: 0; } .doo g, .route { filter: none; } }
+  @media (max-width: 720px) { .stage { padding-top: 92px; } .hello p { display: none; } .card, .hit { --h: clamp(92px, 28vw, 140px); } .note { width: 200px; } }
 </style>
 </head>
 <body data-page="home">
@@ -115,14 +116,13 @@
   <div class="stage">
     <div class="scene" id="scene">
       <div class="note" id="note" aria-live="polite"></div>
-      <div class="hello"><h1 id="tagline"></h1><p id="intro"></p></div>
+      <div class="hello"><h1 id="tagline"></h1></div>
     </div>
   </div>
 </div>
 <section class="after">
   <a href="work.html"><span>All work</span><span>→</span></a>
   <a href="about.html"><span>About</span><span>→</span></a>
-  <a href="thoughts.html"><span>Thoughts</span><span>→</span></a>
 </section>
 <footer data-site-footer></footer>
 
@@ -152,6 +152,7 @@ requestAnimationFrame(function follow() { mx += (tmx - mx) * 0.06; my += (tmy - 
 const ease = (t) => t * t * (3 - 2 * t);
 
 function drawOpening() {
+  if (!opening.offsetHeight) { morph = 1; return; }   // opening skipped (reduced motion): the ribbon shows as it is
   const W = opStage.clientWidth, H = opStage.clientHeight, sc = clamp(W / 1300, 0.55, 1);
   const total = opening.offsetHeight - H, p = clamp(scrollY / total, 0, 1);   // 0 → 1 across the opening
   // Far and middle layers drift up at their own speed.
@@ -203,7 +204,6 @@ const boilN = document.getElementById("boilNoise"); let sd = 1;
 setInterval(() => { sd = (sd % 4) + 1; boilN.setAttribute("seed", sd); }, 130);
 
 document.getElementById("tagline").textContent = SITE.tagline;
-document.getElementById("intro").textContent = SITE.intro;
 
 const LIST = live(), N = LIST.length;
 const scene = document.getElementById("scene"), track = document.getElementById("track");
@@ -245,7 +245,7 @@ function frame(now) {
   const gap = size * 0.5, dx = Math.cos(ROW) * gap, dy = Math.sin(ROW) * gap;
   const ax = W * 0.46, ay = H * 0.7;
   if (hover < 0) drift += dt * 0.0001;                            // slow drift when nobody is touching it
-  const pos = Math.max(0, scrollY - (opening.offsetHeight - innerHeight)) / (gap * 1.6) + drift;
+  const pos = Math.max(0, scrollY - Math.max(0, opening.offsetHeight - innerHeight)) / (gap * 1.6) + drift;
   const sr = scene.getBoundingClientRect();
   RIB = { left: sr.left, top: sr.top, size, spots: [] };
   hello.style.opacity = morph < 1 ? morph : "";

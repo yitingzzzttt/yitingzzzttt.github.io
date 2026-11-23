@@ -6,7 +6,6 @@
 window.SITE = {
   name: "Yiting Zhong",
   tagline: "Planning, spatial data and design.",
-  intro: "Placeholder intro line.",
   email: "zyting0107@outlook.com",
   linkedin: "https://www.linkedin.com/in/yiting-zhong-99377a303",
   location: "Philadelphia, PA",
